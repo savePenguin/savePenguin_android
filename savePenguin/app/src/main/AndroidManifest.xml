@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SavePenguin">
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.SavePenguin.NoActionBar">
@@ -20,6 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MainActivity"/>
     </application>
 
 </manifest>

@@ -5,7 +5,11 @@
     <string name="Login_fragment_label">SavePenguin</string>
     <string name="Register_fragment_label">Register Page</string>
     <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="previous">뒤로가기</string>
+    <string name="name">이름</string>
+    <string name="email">Email</string>
+    <string name="validNumber">인증번호</string>
+    <string name="submit">확인</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
