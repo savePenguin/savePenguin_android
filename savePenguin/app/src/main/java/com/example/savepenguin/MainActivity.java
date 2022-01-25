@@ -22,7 +22,6 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private Button loginBtn, registerBtn;
     private RegisterFragment registerFragment;
