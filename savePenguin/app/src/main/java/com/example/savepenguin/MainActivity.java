@@ -3,43 +3,36 @@ package com.example.savepenguin;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.savepenguin.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
-    private Button loginBtn, registerBtn;
-    private RegisterFragment registerFragment;
-    private LoginFragment loginFragment;
+    private PenguinFragement penguinFragement;
+
+    private Button QR_menuBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.v("메인 페이지", "메인 Activity 시작");
+        penguinFragement = new PenguinFragement();
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_main, penguinFragement).commit();
 
-    }
+        QR_menuBtn = findViewById(R.id.QR_MenuBtn);
+        QR_menuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("메인 페이지", "QR 메뉴 버튼 누름");
+                Intent intent = new Intent(getApplicationContext(), QRManagementActivity.class);
+                startActivity(intent);
+            }
+        });
 
-    public void onChangeFragment(int index) {
-        if (index == 0) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, loginFragment).commit();
-        }
-        else if (index == 1) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, registerFragment).commit();
-        }
     }
 }

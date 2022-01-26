@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SavePenguin">
         <activity
-            android:name=".LoginActivity"
+            android:name=".account.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.SavePenguin.NoActionBar">
@@ -22,6 +22,8 @@
         </activity>
 
         <activity android:name=".MainActivity"/>
+        <activity android:name=".QRManagementActivity"/>
+        <activity android:name=".CreateQRActivity"/>
     </application>
 
 </manifest>
