@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.account;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,8 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.savepenguin.R;
 
-public class RegisterFragment extends Fragment {
+public class Find_pwFragment extends Fragment {
 
     LoginActivity loginActivity;
 
@@ -35,14 +36,12 @@ public class RegisterFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        Log.v("로그인 페이지", "회원가입 Fragment 시작");
-        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_register, container, false);
+        Log.v("로그인 페이지", "비밀번호 찾기 Fragment 시작");
+        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_findpw, container, false);
 
-        TextView text_id = viewGroup.findViewById(R.id.editText_id);
-        TextView text_pw = viewGroup.findViewById(R.id.editText_pw);
-        TextView text_name = viewGroup.findViewById(R.id.editText_name);
-        TextView text_email = viewGroup.findViewById(R.id.editText_email);
-        TextView text_validNumber = viewGroup.findViewById(R.id.editText_validNumber);
+        TextView text_id = viewGroup.findViewById(R.id.editText_findpw_id);
+        TextView text_name = viewGroup.findViewById(R.id.editText_findpw_name);
+        TextView text_email = viewGroup.findViewById(R.id.editText_findpw_email);
 
 
         Button goBackBtn = viewGroup.findViewById(R.id.button_goback);
@@ -54,22 +53,20 @@ public class RegisterFragment extends Fragment {
             }
         });
 
-        Button registerBtn = viewGroup.findViewById(R.id.button_submit);
-        registerBtn.setOnClickListener(new View.OnClickListener(){
+        Button submitBtn = viewGroup.findViewById(R.id.button_findpw_submit);
+        submitBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Log.v("회원가입 페이지", "확인(회원가입) 버튼 누름");
-                String id, pw, name, email;
+                Log.v("비밀번호 찾기 페이지", "확인(비밀번호 찾기) 버튼 누름");
+                String id, name, email;
                 id = text_id.getText().toString();
-                pw = text_pw.getText().toString();
                 name = text_name.getText().toString();
                 email = text_email.getText().toString();
-                Log.v("회원가입 페이지", "id : " + id + " pw : " + pw + " name : " + name + " email : " + email);
+                Log.v("비밀번호 찾기 페이지", "id : " + id +" name : " + name + " email : " + email);
             }
         });
 
         return viewGroup;
 
     }
-
 }

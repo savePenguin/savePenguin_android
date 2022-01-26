@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".account.LoginActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -21,8 +21,8 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainerView"
-        android:name="com.example.savepenguin.LoginFragment"
+        android:id="@+id/fragmentContainerView_login"
+        android:name="com.example.savepenguin.account.LoginFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -1,13 +1,13 @@
-package com.example.savepenguin;
+package com.example.savepenguin.account;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.ui.AppBarConfiguration;
+
+import com.example.savepenguin.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         loginFragment = new LoginFragment();
         find_idFragment = new Find_idFragment();
         find_pwFragment = new Find_pwFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView,loginFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_login,loginFragment).commit();
 
 
     }
@@ -37,19 +37,19 @@ public class LoginActivity extends AppCompatActivity {
     public void onChangeFragment(int index) {
         //로그인
         if (index == 0) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, loginFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_login, loginFragment).commit();
         }
         //회원가입
         else if (index == 1) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, registerFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_login, registerFragment).commit();
         }
         //아이디 찾기
         else if (index == 2) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, find_idFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_login, find_idFragment).commit();
         }
         //비밀번호 찾기
         else if (index == 3) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, find_pwFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_login, find_pwFragment).commit();
         }
     }
 

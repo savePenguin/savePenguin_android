@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.account;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.example.savepenguin.R;
 
 
 public class Find_idFragment extends Fragment {
