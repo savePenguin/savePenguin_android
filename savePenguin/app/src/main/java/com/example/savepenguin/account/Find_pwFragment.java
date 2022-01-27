@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -63,10 +64,26 @@ public class Find_pwFragment extends Fragment {
                 name = text_name.getText().toString();
                 email = text_email.getText().toString();
                 Log.v("비밀번호 찾기 페이지", "id : " + id +" name : " + name + " email : " + email);
+
+                if (isValidInput(name) && isValidInput(email) && isValidInput(id)) {
+
+                    //비밀번호 찾기
+
+                } else {
+                    Log.v("비밀번호 찾기 페이지", "id, name, email 입력 중 누락된 것이 존재");
+                    Toast.makeText(getActivity(), "회원 정보 입력이 누락되었습니다", Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
         return viewGroup;
-
     }
+
+    public static boolean isValidInput(String input) {
+        if (input.equals("") | input == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

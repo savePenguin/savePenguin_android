@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ import com.example.savepenguin.account.LoginActivity;
 public class RegisterFragment extends Fragment {
 
     LoginActivity loginActivity;
+    dummyData data = new dummyData();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -68,11 +70,32 @@ public class RegisterFragment extends Fragment {
                 name = text_name.getText().toString();
                 email = text_email.getText().toString();
                 Log.v("회원가입 페이지", "id : " + id + " pw : " + pw + " name : " + name + " email : " + email);
+
+                if (isValidInput(id) && isValidInput(pw) && isValidInput(name) && isValidInput(email)) {
+
+                    // 입력 유효성만 검사한 후 서버에 회원 정보 보냄
+                    // 서버에서 중복성 검사 후 결과 리턴
+                    data.users.add(new User(id, pw, email, name, 0));
+                    Log.v("회원가입 페이지", "회원가입 성공");
+                    loginActivity.onChangeFragment(0);
+                } else {
+                    Log.v("회원가입 페이지", "입력 누락 ");
+                    Toast.makeText(getActivity(), "회원 정보 입력이 누락되었습니다", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         return viewGroup;
 
+    }
+
+    public static boolean isValidInput(String input) {
+        if (input.equals("") | input == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,10 +17,14 @@ import androidx.fragment.app.Fragment;
 import com.example.savepenguin.MainActivity;
 import com.example.savepenguin.R;
 
+import java.util.ArrayList;
+
 
 public class LoginFragment extends Fragment {
 
     LoginActivity loginActivity;
+    dummyData data = new dummyData();
+    ArrayList<User> users = data.users;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -59,8 +64,25 @@ public class LoginFragment extends Fragment {
                 id = text_id.getText().toString();
                 pw = text_pw.getText().toString();
                 Log.v("로그인 페이지", "id : " + id + " pw : " + pw);
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+
+                //입력 누락되었는지 확인 후 계정이 유효한지 확인
+                if (isValidInput(id) && isValidInput(pw)) {
+                    if (isAccountValid(data.users, id, pw)) {
+                        Log.v("로그인 페이지", "로그인 버튼 성공");
+
+                        SharedPreference.setAttribute(getContext(), "userid", id);
+
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Log.v("로그인 페이지", "로그인 실패");
+                        Toast.makeText(getActivity(),"아이디나 비밀번호가 틀렸습니다", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Log.v("로그인 페이지", "id, pw 입력 중 누락된 것이 존재");
+                    Toast.makeText(getActivity(), "아이디나 비밀번호가 올바르게 입력되지 않았습니다", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -93,6 +115,26 @@ public class LoginFragment extends Fragment {
 
         return viewGroup;
 
+    }
+
+    public static boolean isAccountValid(ArrayList<User> data, String id, String pw) {
+        String userid, userpw;
+        for (int i = 0; i < data.size(); i++) {
+            userid = data.get(i).getUserid();
+            userpw = data.get(i).getUserpw();
+            if (userid.equals(id) && userpw.equals(pw)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isValidInput(String input) {
+        if (input.equals("") | input == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

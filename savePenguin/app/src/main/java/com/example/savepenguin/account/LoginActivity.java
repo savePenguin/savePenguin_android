@@ -9,6 +9,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 
 import com.example.savepenguin.R;
 
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -30,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
         find_idFragment = new Find_idFragment();
         find_pwFragment = new Find_pwFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_login,loginFragment).commit();
-
 
     }
 
