@@ -10,6 +10,9 @@
     <string name="email">Email</string>
     <string name="validNumber">인증번호</string>
     <string name="submit">확인</string>
+    <string name="myPage">마이페이지</string>
+    <string name="penguinShop">펭Shop</string>
+    <string name="logout">로그아웃</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
