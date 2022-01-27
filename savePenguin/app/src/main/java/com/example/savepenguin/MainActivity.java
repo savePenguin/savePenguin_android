@@ -1,5 +1,6 @@
 package com.example.savepenguin;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private PenguinFragement penguinFragement;
 
     private Button QR_menuBtn, sidebar_closeBtn;
-    private TextView text_userId, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop;
+    private TextView text_userId, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop,sidebar_logout;
 
     private String userID;
     private int userPoint;
@@ -90,7 +91,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         sidebar_penguinShop = findViewById(R.id.sidebar_penguinshop);
+
+        sidebar_logout = findViewById(R.id.sidebar_logout);
+        sidebar_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("메인 페이지", "로그아웃 버튼 누름");
+                //메인 액티비티 종료
+                finish();
+            }
+        });
+
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         drawerView = (View)findViewById(R.id.drawer2);
 
