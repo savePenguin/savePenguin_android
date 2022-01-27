@@ -70,6 +70,7 @@ public class LoginFragment extends Fragment {
                     if (isAccountValid(data.users, id, pw)) {
                         Log.v("로그인 페이지", "로그인 버튼 성공");
 
+                        Log.v("로그인 페이지", "로그인 정보 가져오기");
                         SharedPreference.setAttribute(getContext(), "userid", id);
 
                         Intent intent = new Intent(getActivity(), MainActivity.class);

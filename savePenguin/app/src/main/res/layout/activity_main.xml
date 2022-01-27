@@ -11,45 +11,61 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <View
-            android:id="@+id/view4"
+        <androidx.drawerlayout.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
-            android:layout_height="35dp" />
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:orientation="horizontal">
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerView_main"
+                android:name="com.example.savepenguin.PenguinFragement"
+                android:layout_width="match_parent"
+                android:layout_height="416dp" />
 
-            <TextView
-                android:id="@+id/text_userid"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="TextView"
-                android:textSize="24sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <View
-                android:id="@+id/view3"
-                android:layout_width="157dp"
-                android:layout_height="match_parent" />
 
-            <Button
-                android:id="@+id/QR_MenuBtn"
-                android:layout_width="106dp"
-                android:layout_height="54dp"
-                android:text="QR메뉴" />
-        </LinearLayout>
+                <Button
+                    android:id="@+id/button_opensidebar"
+                    android:layout_width="51dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_baseline_dehaze_48"
+                    android:onClick="btnOnclick" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainerView_main"
-            android:name="com.example.savepenguin.PenguinFragement"
-            android:layout_width="match_parent"
-            android:layout_height="532dp" />
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="70dp"
+                    android:layout_height="52dp" />
 
-        <View
-            android:id="@+id/view2"
-            android:layout_width="match_parent"
-            android:layout_height="110dp" />
+                <TextView
+                    android:id="@+id/text_userid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="TextView"
+                    android:textSize="24sp" />
+
+                <View
+                    android:id="@+id/view3"
+                    android:layout_width="70dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/QR_MenuBtn"
+                    android:layout_width="106dp"
+                    android:layout_height="54dp"
+                    android:text="QR메뉴" />
+
+
+            </LinearLayout>
+
+            <include layout="@layout/navbar" />
+
+
+        </androidx.drawerlayout.widget.DrawerLayout>
 
     </LinearLayout>
 
