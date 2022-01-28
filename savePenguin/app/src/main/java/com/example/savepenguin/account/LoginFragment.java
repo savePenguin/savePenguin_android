@@ -1,7 +1,9 @@
 package com.example.savepenguin.account;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.savepenguin.MainActivity;
 import com.example.savepenguin.R;
+import com.example.savepenguin.RequestHttpURLConnection;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,7 @@ public class LoginFragment extends Fragment {
     LoginActivity loginActivity;
     dummyData data = new dummyData();
     ArrayList<User> users = data.users;
-
+    private boolean isAccountValid = false;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -65,23 +68,23 @@ public class LoginFragment extends Fragment {
                 pw = text_pw.getText().toString();
                 Log.v("로그인 페이지", "id : " + id + " pw : " + pw);
 
+                // URL 설정.
+                String url = "http://";
+
+                ContentValues loginInfo = new ContentValues();
+                loginInfo.put("userid", id);
+                loginInfo.put("userpw", pw);
+
+
                 //입력 누락되었는지 확인 후 계정이 유효한지 확인
                 if (isValidInput(id) && isValidInput(pw)) {
-                    if (isAccountValid(data.users, id, pw)) {
-                        Log.v("로그인 페이지", "로그인 버튼 성공");
+                    // AsyncTask를 통해 HttpURLConnection 수행.
+                    NetworkTask networkTask = new NetworkTask(url, loginInfo);
+                    networkTask.execute();
 
-                        Log.v("로그인 페이지", "로그인 정보 가져오기");
-                        SharedPreference.setAttribute(getContext(), "userid", id);
-
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Log.v("로그인 페이지", "로그인 실패");
-                        Toast.makeText(getActivity(),"아이디나 비밀번호가 틀렸습니다", Toast.LENGTH_SHORT).show();
-                    }
                 } else {
+                    Toast.makeText(getContext(), "id, pw 입력 중 누락된 것이 존재", Toast.LENGTH_SHORT).show();
                     Log.v("로그인 페이지", "id, pw 입력 중 누락된 것이 존재");
-                    Toast.makeText(getActivity(), "아이디나 비밀번호가 올바르게 입력되지 않았습니다", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -118,23 +121,56 @@ public class LoginFragment extends Fragment {
 
     }
 
-    public static boolean isAccountValid(ArrayList<User> data, String id, String pw) {
-        String userid, userpw;
-        for (int i = 0; i < data.size(); i++) {
-            userid = data.get(i).getUserid();
-            userpw = data.get(i).getUserpw();
-            if (userid.equals(id) && userpw.equals(pw)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isValidInput(String input) {
         if (input.equals("") | input == null) {
             return false;
         } else {
             return true;
+        }
+    }
+
+    public class NetworkTask extends AsyncTask<Void, Void, String> {
+
+        private String url;
+        private ContentValues values;
+
+        public NetworkTask(String url, ContentValues values) {
+
+            this.url = url;
+            this.values = values;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            String result; // 요청 결과를 저장할 변수.
+            RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
+            result = requestHttpURLConnection.request(url, values); // 해당 URL로 부터 결과물을 얻어온다.
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
+            //리턴 결과로 로그인 성공 실패 여부 확인
+            isAccountValid = true;
+
+            if (isAccountValid) {
+                Log.v("로그인 페이지", "로그인 버튼 성공");
+
+                Log.v("로그인 페이지", "로그인 정보 가져오기");
+                SharedPreference.setAttribute(getContext(), "userid", "temp");
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            } else {
+                Log.v("로그인 페이지", "로그인 실패");
+                Toast.makeText(getActivity(),"아이디나 비밀번호가 틀렸습니다", Toast.LENGTH_SHORT).show();
+            }
+            System.out.println(s);
         }
     }
 
