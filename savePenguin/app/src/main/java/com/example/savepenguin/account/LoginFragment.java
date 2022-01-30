@@ -230,6 +230,28 @@ public class LoginFragment extends Fragment {
             // 서버에서 보낸 값을 리턴합니다.
             return receiveMsg;
         }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
+            //리턴 결과로 로그인 성공 실패 여부 확인
+            isAccountValid = true;
+
+            if (isAccountValid) {
+                Log.v("로그인 페이지", "로그인 버튼 성공");
+
+                Log.v("로그인 페이지", "로그인 정보 가져오기");
+                SharedPreference.setAttribute(getContext(), "userid", "temp");
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            } else {
+                Log.v("로그인 페이지", "로그인 실패");
+                Toast.makeText(getActivity(),"아이디나 비밀번호가 틀렸습니다", Toast.LENGTH_SHORT).show();
+            }
+            System.out.println(s);
+        }
     }
 
 }
