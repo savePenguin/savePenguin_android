@@ -6,29 +6,30 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="237dp"
         android:layout_height="97dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="64dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.712"
+        app:layout_constraintHorizontal_bias="0.597"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName">
+        app:layout_constraintTop_toBottomOf="@+id/editText_cupName">
 
         <RadioGroup
-            android:id="@+id/radioGroup1"
+            android:id="@+id/radioGroup_cupTypes"
             android:layout_width="197dp"
             android:layout_height="83dp">
 
             <RadioButton
-                android:id="@+id/radio0"
+                android:id="@+id/radio_cuptype1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="텀블러" />
 
             <RadioButton
-                android:id="@+id/radio1"
+                android:id="@+id/radio_cuptype2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="리유저블컵" />
@@ -47,7 +48,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.871" />
+        app:layout_constraintVertical_bias="0.931" />
 
     <Button
         android:id="@+id/goBackBtn"
@@ -62,52 +63,100 @@
         app:layout_constraintVertical_bias="0.023" />
 
     <TextView
+        android:id="@+id/textView_picsubmit"
+        android:layout_width="65dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="112dp"
+        android:text="@string/picSubmit"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.072"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_cuptype" />
+
+    <TextView
         android:id="@+id/textView_cupname"
         android:layout_width="61dp"
         android:layout_height="33dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="80dp"
         android:lineSpacingExtra="14sp"
         android:text="@string/cupname"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.165"
+        app:layout_constraintHorizontal_bias="0.071"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView_cuptype"
         android:layout_width="66dp"
         android:layout_height="29dp"
         android:layout_marginTop="68dp"
         android:text="@string/type"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.168"
+        app:layout_constraintHorizontal_bias="0.072"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_cupname" />
 
-    <TextView
-        android:id="@+id/textView_picsubmit"
-        android:layout_width="65dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="88dp"
-        android:text="@string/picSubmit"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.167"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editText_cupName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="80dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.616"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_deletepic"
+        android:layout_width="24dp"
+        android:layout_height="20dp"
+        android:background="@drawable/ic_baseline_close_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.762"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499" />
+
+    <Button
+        android:id="@+id/button_submitpic"
+        android:layout_width="53dp"
+        android:layout_height="32dp"
+        android:text="등록"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.824"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.453" />
+
+    <ImageView
+        android:id="@+id/imageView_cupPreview"
+        android:layout_width="180dp"
+        android:layout_height="159dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_cupPicName"
+        app:srcCompat="@android:drawable/screen_background_light_transparent" />
+
+    <TextView
+        android:id="@+id/textView_cupPicName"
+        android:layout_width="183dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="36dp"
+        android:text="TextView"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.456"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
