@@ -29,7 +29,6 @@ import javax.mail.SendFailedException;
 public class RegisterFragment extends Fragment {
 
     LoginActivity loginActivity;
-    dummyData data = new dummyData();
 
     private boolean isEmailValid, isTimeout;
     private String validCode;
@@ -161,7 +160,6 @@ public class RegisterFragment extends Fragment {
                     // 서버에서 중복성 검사 후 결과 리턴
                     // 이메일 인증 확인 
                     if (isEmailValid) {
-                        data.users.add(new User(id, pw, email, name, 0));
                         Log.v("회원가입 페이지", "회원가입 성공");
                         text_id.setText("");
                         text_name.setText("");

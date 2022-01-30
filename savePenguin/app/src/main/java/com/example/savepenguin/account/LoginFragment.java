@@ -16,11 +16,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.savepenguin.HttpClient;
 import com.example.savepenguin.MainActivity;
 import com.example.savepenguin.R;
 import com.example.savepenguin.RequestHttpURLConnection;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -28,13 +30,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoginFragment extends Fragment {
 
     LoginActivity loginActivity;
-    dummyData data = new dummyData();
-    ArrayList<User> users = data.users;
     private boolean isAccountValid = false;
     @Override
     public void onAttach(@NonNull Context context) {
@@ -76,7 +78,7 @@ public class LoginFragment extends Fragment {
                 Log.v("로그인 페이지", "id : " + id + " pw : " + pw);
 
                 // URL 설정.
-                String url = "http://";
+                String url = "http://192.168.219.110:8060/auth/signin";
 
                 ContentValues loginInfo = new ContentValues();
                 loginInfo.put("userid", id);
@@ -85,7 +87,7 @@ public class LoginFragment extends Fragment {
 
                 //입력 누락되었는지 확인 후 계정이 유효한지 확인
                 if (isValidInput(id) && isValidInput(pw)) {
-                    // AsyncTask를 통해 HttpURLConnection 수행.
+                     //AsyncTask를 통해 HttpURLConnection 수행.
 //                    NetworkTask networkTask = new NetworkTask(url, loginInfo);
 //                    networkTask.execute();
                     try {
@@ -95,6 +97,18 @@ public class LoginFragment extends Fragment {
                     } catch (Exception e) {
 
                     }
+//                    LoginCheck loginCheck = new LoginCheck(id, pw);
+//                    loginCheck.tryLogin();
+
+//                    NetworkTask2 networkTask = new NetworkTask2();
+//                    Map<String, String> params = new HashMap<String, String>();
+//                    params.put("userid", id);
+//                    params.put("userpw", pw);
+//
+//                    networkTask.execute(params);
+
+
+
 
 
                 } else {
@@ -196,7 +210,7 @@ public class LoginFragment extends Fragment {
         protected String doInBackground(String... strings) {
             try {
                 String str;
-                URL url = new URL("http://내ip:8080/프로젝트이름/요청값이름");  // 어떤 서버에 요청할지(localhost 안됨.)
+                URL url = new URL("http://192.168.219.110:8060/TestLogin");  // 어떤 서버에 요청할지(localhost 안됨.)
                 // ex) http://123.456.789.10:8080/hello/android
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -205,7 +219,7 @@ public class LoginFragment extends Fragment {
 
                 // 서버에 보낼 값 포함해 요청함.
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-                sendMsg = "id="+strings[0]+"&pw="+strings[1]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                sendMsg = "userid="+strings[0]+"&userpw="+strings[1]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
                 osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
                 osw.flush();
 
@@ -253,5 +267,34 @@ public class LoginFragment extends Fragment {
             System.out.println(s);
         }
     }
+
+    public class NetworkTask2 extends AsyncTask<Map<String, String>, Integer, String> {
+        @Override
+        protected String doInBackground(Map<String, String>... maps) { // 내가 전송하고 싶은 파라미터
+
+            // Http 요청 준비 작업
+            HttpClient.Builder http = new HttpClient.Builder("POST", "http://192.168.219.110:8060/TestLogin");
+
+            // Parameter 를 전송한다.
+            http.addAllParameters(maps[0]);
+
+            //Http 요청 전송
+            HttpClient post = http.create();
+            post.request();
+
+            // 응답 상태코드 가져오기
+            int statusCode = post.getHttpStatusCode();
+            // 응답 본문 가져오기
+            String body = post.getBody();
+
+            return body;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+        }
+    }
+
 
 }
