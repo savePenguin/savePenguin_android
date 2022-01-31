@@ -20,23 +20,22 @@ import com.example.savepenguin.HttpClient;
 import com.example.savepenguin.MainActivity;
 import com.example.savepenguin.R;
 import com.example.savepenguin.RequestHttpURLConnection;
+import com.example.savepenguin.IpSetting;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 
 public class LoginFragment extends Fragment {
 
     LoginActivity loginActivity;
+    IpSetting ipSetting = new IpSetting();
     private boolean isAccountValid = false;
     @Override
     public void onAttach(@NonNull Context context) {
@@ -78,7 +77,7 @@ public class LoginFragment extends Fragment {
                 Log.v("로그인 페이지", "id : " + id + " pw : " + pw);
 
                 // URL 설정.
-                String url = "http://192.168.219.110:8060/auth/signin";
+                String url = ipSetting.getBaseUrl() + "/auth/signin";
 
                 ContentValues loginInfo = new ContentValues();
                 loginInfo.put("userid", id);
@@ -87,9 +86,11 @@ public class LoginFragment extends Fragment {
 
                 //입력 누락되었는지 확인 후 계정이 유효한지 확인
                 if (isValidInput(id) && isValidInput(pw)) {
-                     //AsyncTask를 통해 HttpURLConnection 수행.
+                     //방법 1 : AsyncTask를 통해 HttpURLConnection 수행.
 //                    NetworkTask networkTask = new NetworkTask(url, loginInfo);
 //                    networkTask.execute();
+
+                    //방법 2
                     try {
                         CustomTask task = new CustomTask();
                         String result = task.execute(id,pw).get();
@@ -97,19 +98,17 @@ public class LoginFragment extends Fragment {
                     } catch (Exception e) {
 
                     }
+                    //방법 3
 //                    LoginCheck loginCheck = new LoginCheck(id, pw);
 //                    loginCheck.tryLogin();
 
+                    //방법 4
 //                    NetworkTask2 networkTask = new NetworkTask2();
 //                    Map<String, String> params = new HashMap<String, String>();
 //                    params.put("userid", id);
 //                    params.put("userpw", pw);
 //
 //                    networkTask.execute(params);
-
-
-
-
 
                 } else {
                     Toast.makeText(getContext(), "id, pw 입력 중 누락된 것이 존재", Toast.LENGTH_SHORT).show();
@@ -205,17 +204,20 @@ public class LoginFragment extends Fragment {
 
     class CustomTask extends AsyncTask<String, Void, String> {
         String sendMsg, receiveMsg;
+        String id;
         @Override
         // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
         protected String doInBackground(String... strings) {
             try {
+                id = strings[0];
                 String str;
-                URL url = new URL("http://192.168.219.110:8060/TestLogin");  // 어떤 서버에 요청할지(localhost 안됨.)
+                URL url = new URL(ipSetting.getBaseUrl()+"/TestLogin");  // 어떤 서버에 요청할지(localhost 안됨.)
                 // ex) http://123.456.789.10:8080/hello/android
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
                 conn.setDoOutput(true);
+                conn.setConnectTimeout(1000);
 
                 // 서버에 보낼 값 포함해 요청함.
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
@@ -256,7 +258,7 @@ public class LoginFragment extends Fragment {
                 Log.v("로그인 페이지", "로그인 버튼 성공");
 
                 Log.v("로그인 페이지", "로그인 정보 가져오기");
-                SharedPreference.setAttribute(getContext(), "userid", "temp");
+                SharedPreference.setAttribute(getContext(), "userid", id);
 
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
@@ -273,7 +275,7 @@ public class LoginFragment extends Fragment {
         protected String doInBackground(Map<String, String>... maps) { // 내가 전송하고 싶은 파라미터
 
             // Http 요청 준비 작업
-            HttpClient.Builder http = new HttpClient.Builder("POST", "http://192.168.219.110:8060/TestLogin");
+            HttpClient.Builder http = new HttpClient.Builder("POST", ipSetting.getBaseUrl() + "/TestLogin");
 
             // Parameter 를 전송한다.
             http.addAllParameters(maps[0]);

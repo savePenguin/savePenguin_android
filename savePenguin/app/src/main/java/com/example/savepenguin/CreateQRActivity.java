@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 
 public class CreateQRActivity extends AppCompatActivity {
 
@@ -35,6 +38,10 @@ public class CreateQRActivity extends AppCompatActivity {
     private EditText text_cupName;
     private String cupImageFileName, cupName = "temp";
     private int cupType = 0;
+    private File tempImage, tempFile;
+    private boolean haveImage;
+    IpSetting ipSetting = new IpSetting();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,15 +60,10 @@ public class CreateQRActivity extends AppCompatActivity {
         text_cupName = findViewById(R.id.editText_cupName);
         text_cupPicName = findViewById(R.id.textView_cupPicName);
         cupTypesGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);
-
-//        try {
-//            String imgpath = getCacheDir() + "/" + cupImageFileName;
-//            Bitmap bm = BitmapFactory.decodeFile(imgpath);
-//            cupPreview.setImageBitmap(bm);   // 내부 저장소에 저장된 이미지를 이미지뷰에 셋
-//            Toast.makeText(getApplicationContext(), "파일 로드 성공", Toast.LENGTH_SHORT).show();
-//        } catch (Exception e) {
-//            Toast.makeText(getApplicationContext(), "파일 로드 실패", Toast.LENGTH_SHORT).show();
-//        }
+        haveImage = false;
+        cupPreview.setVisibility(View.GONE);
+        deletePicBtn.setVisibility(View.GONE);
+        text_cupPicName.setVisibility(View.GONE);
 
         // 사진 등록 버튼
         submitPicBtn.setOnClickListener(new View.OnClickListener() {
@@ -89,8 +91,9 @@ public class CreateQRActivity extends AppCompatActivity {
                     File[] flist = file.listFiles();
                     for (int i = 0; i < flist.length; i++) {    // 배열의 크기만큼 반복
                         System.out.println(flist[i].getName());
-                        if (flist[i].getName().equals(cupName+".png")) {   // 삭제하고자 하는 이름과 같은 파일명이 있으면 실행
+                        if (flist[i].getName().equals(cupName + ".png")) {   // 삭제하고자 하는 이름과 같은 파일명이 있으면 실행
                             flist[i].delete();  // 파일 삭제
+                            haveImage = false;
                             Toast.makeText(getApplicationContext(), "파일 삭제 성공", Toast.LENGTH_SHORT).show();
                             initPicRegister(); //사진등록 폼 숨기기
                         }
@@ -101,6 +104,7 @@ public class CreateQRActivity extends AppCompatActivity {
             }
         });
 
+        //뒤로가기 버튼
         goBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,12 +113,29 @@ public class CreateQRActivity extends AppCompatActivity {
             }
         });
 
+        //QR 발급 버튼
         makeQRBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String qrname = text_cupName.getText().toString();
-                Bitmap qrpic = cupPreview.getDrawingCache();
                 int cuptype = cupType;
+
+                Log.v("QR 발급 페이지", "QR 발급 버튼 누름");
+                if (qrname.equals("") || !haveImage) {
+                    Log.v("QR 발급 페이지", "입력 누락");
+                    Toast.makeText(getApplicationContext(), "입력 누락", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.v("QR 발급 페이지", "정상 입력");
+                    FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/TestImage", tempFile);
+                    Toast.makeText(getApplicationContext(), "QR 발급", Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(new Runnable() {// 0.5 초 후에 실행
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    }, 500);
+
+                }
 
             }
         });
@@ -150,6 +171,7 @@ public class CreateQRActivity extends AppCompatActivity {
                     InputStream instream = resolver.openInputStream(fileUri);
                     Bitmap imgBitmap = BitmapFactory.decodeStream(instream);
                     cupPreview.setImageBitmap(imgBitmap);    // 선택한 이미지 이미지뷰에 셋
+                    haveImage = true;
                     finishPicRegister();
                     instream.close();   // 스트림 닫아주기
                     saveBitmapToJpeg(imgBitmap);    // 내부 저장소에 저장
@@ -177,12 +199,17 @@ public class CreateQRActivity extends AppCompatActivity {
     };
 
     public void saveBitmapToJpeg(Bitmap bitmap) {   // 선택한 이미지 내부 저장소에 저장
-        File tempFile = new File(getCacheDir(), cupName+".png");    // 파일 경로와 이름 넣기
+        tempFile = new File(getCacheDir(), cupName + ".png");    // 파일 경로와 이름 넣기
         try {
             tempFile.createNewFile();   // 자동으로 빈 파일을 생성하기
+            tempImage.createNewFile();
             FileOutputStream out = new FileOutputStream(tempFile);  // 파일을 쓸 수 있는 스트림을 준비하기
+            FileOutputStream out2 = new FileOutputStream(tempImage);  // 파일을 쓸 수 있는 스트림을 준비하기
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);   // compress 함수를 사용해 스트림에 비트맵을 저장하기
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out2);   // compress 함수를 사용해 스트림에 비트맵을 저장하기
             out.close();    // 스트림 닫아주기
+            out2.close();
+
             Toast.makeText(getApplicationContext(), "파일 저장 성공", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "파일 저장 실패", Toast.LENGTH_SHORT).show();
@@ -190,16 +217,15 @@ public class CreateQRActivity extends AppCompatActivity {
     }
 
     // 선택된 이미지 파일명 가져오기
-    public String getImageNameToUri(Uri data)
-    {
-        String[] proj = { MediaStore.Images.Media.DATA };
+    public String getImageNameToUri(Uri data) {
+        String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(data, proj, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 
         cursor.moveToFirst();
 
         String imgPath = cursor.getString(column_index);
-        String imgName = imgPath.substring(imgPath.lastIndexOf("/")+1);
+        String imgName = imgPath.substring(imgPath.lastIndexOf("/") + 1);
 
         return imgName;
     }

@@ -14,8 +14,6 @@ import okhttp3.Response;
 public class FileUploadUtils {
     public static void send2Server(String url, File file) {
 
-        ipSetting ipSetting = new ipSetting();
-
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("files", file.getName(), RequestBody.create(MultipartBody.FORM, file))
