@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.mainpage;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,12 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.savepenguin.account.LoginActivity;
+import com.example.savepenguin.R;
 
 public class PenguinFragement extends Fragment {
 

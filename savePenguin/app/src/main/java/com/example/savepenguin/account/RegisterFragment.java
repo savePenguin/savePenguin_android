@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Trace;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.savepenguin.GmailSender;
-import com.example.savepenguin.MainActivity;
 import com.example.savepenguin.R;
-import com.example.savepenguin.account.LoginActivity;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;

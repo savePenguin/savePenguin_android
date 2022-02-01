@@ -1,16 +1,13 @@
-package com.example.savepenguin;
+package com.example.savepenguin.qrpage;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,8 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.savepenguin.R;
+import com.example.savepenguin.model.QR;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class QRManagementActivity extends AppCompatActivity {
 
@@ -53,7 +52,7 @@ public class QRManagementActivity extends AppCompatActivity {
             items.add(new QR("qr" + i, "test" + i, getResources().getDrawable(R.drawable.sample_qr)));
         }
 
-        userList = findViewById(R.id.ListView_QR);
+        userList = findViewById(R.id.ListView_QRList);
         linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         adapter = new UserListAdapter(items);
         userList.setLayoutManager(linearLayoutManager);
@@ -96,8 +95,8 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
         public Holder(@NonNull View itemView) {
             super(itemView);
             profileImg = itemView.findViewById(R.id.profile_img);
-            qrName = itemView.findViewById(R.id.qr_name);
-            about = itemView.findViewById(R.id.about);
+            qrName = itemView.findViewById(R.id.text_point_item);
+            about = itemView.findViewById(R.id.text_aboutpoint);
         }
     }
 }

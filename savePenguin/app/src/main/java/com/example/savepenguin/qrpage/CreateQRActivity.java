@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.qrpage;
 
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +22,12 @@ import android.widget.Toast;
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.savepenguin.IpSetting;
+import com.example.savepenguin.R;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 
 public class CreateQRActivity extends AppCompatActivity {
 

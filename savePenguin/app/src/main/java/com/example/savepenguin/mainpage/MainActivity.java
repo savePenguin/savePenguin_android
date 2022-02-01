@@ -1,27 +1,23 @@
-package com.example.savepenguin;
+package com.example.savepenguin.mainpage;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
-import com.google.android.material.navigation.NavigationView;
+import com.example.savepenguin.mypage.MyPageActivity;
+import com.example.savepenguin.qrpage.QRManagementActivity;
 
 public class MainActivity extends AppCompatActivity {
 

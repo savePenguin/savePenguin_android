@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.savepenguin.HttpClient;
-import com.example.savepenguin.MainActivity;
+import com.example.savepenguin.mainpage.MainActivity;
 import com.example.savepenguin.R;
 import com.example.savepenguin.RequestHttpURLConnection;
 import com.example.savepenguin.IpSetting;

@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.account;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

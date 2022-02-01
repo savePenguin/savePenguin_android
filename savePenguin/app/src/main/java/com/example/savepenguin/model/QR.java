@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.model;
 
 import android.graphics.drawable.Drawable;
 

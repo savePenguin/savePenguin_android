@@ -17,7 +17,10 @@
     <string name="cupname">컵이름</string>
     <string name="type">종류</string>
     <string name="picSubmit">사진 등록</string>
-
+    <string name="week">1 주</string>
+    <string name="month">한 달</string>
+    <string name="halfyear">반 년</string>
+    <string name="year">1 년</string>
 
 
     <string name="hello_first_fragment">Hello first fragment</string>
