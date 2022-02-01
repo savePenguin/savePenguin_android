@@ -5,13 +5,6 @@
     android:orientation="horizontal"
     android:padding="10dp">
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:id="@+id/profile_img"
-        android:scaleType="fitXY"
-        android:layout_marginRight="10dp"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,14 +15,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="qr 이름"
+            android:text="포인트"
             android:textColor="#000000" />
 
         <TextView
             android:id="@+id/text_aboutpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="qr 설명"
+            android:text="포인트 내용설명"
             android:textColor="#555555" />
     </LinearLayout>
 </LinearLayout>

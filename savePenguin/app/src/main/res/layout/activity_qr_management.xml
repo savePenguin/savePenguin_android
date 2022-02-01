@@ -44,7 +44,7 @@
             android:layout_height="67dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ListView_QR"
+            android:id="@+id/ListView_QRList"
             android:layout_width="match_parent"
             android:layout_height="291dp">
 
