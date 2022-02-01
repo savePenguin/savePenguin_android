@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".mainpage.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,11 +15,11 @@
             android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MainActivity">
+            tools:context=".mainpage.MainActivity">
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentContainerView_main"
-                android:name="com.example.savepenguin.PenguinFragement"
+                android:name="com.example.savepenguin.mainpage.PenguinFragement"
                 android:layout_width="match_parent"
                 android:layout_height="416dp" />
 

@@ -106,6 +106,41 @@
                 android:inputType="textPassword" />
         </LinearLayout>
 
+        <View
+            android:id="@+id/view12"
+            android:layout_width="wrap_content"
+            android:layout_height="129dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="47dp"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/view10"
+                android:layout_width="158dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/button_changepw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="비밀번호 변경" />
+
+            <View
+                android:id="@+id/view11"
+                android:layout_width="158dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view15"
+            android:layout_width="wrap_content"
+            android:layout_height="129dp"
+            android:layout_weight="1" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

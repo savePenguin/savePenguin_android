@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.model;
 
 public class Point {
     private int point;

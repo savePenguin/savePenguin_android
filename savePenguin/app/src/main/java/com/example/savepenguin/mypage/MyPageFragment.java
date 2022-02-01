@@ -67,7 +67,7 @@ public class MyPageFragment extends Fragment {
             public void onClick(View v) {
                 Log.v("마이 페이지", "회원 탈퇴 누름");
 
-
+                myPageActivity.finish();
             }
         });
 

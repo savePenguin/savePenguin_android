@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.qrpage;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.savepenguin.R;
+import com.example.savepenguin.model.QR;
 
 import java.util.ArrayList;
 

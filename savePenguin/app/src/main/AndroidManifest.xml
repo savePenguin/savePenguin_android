@@ -29,9 +29,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".QRManagementActivity"/>
-        <activity android:name=".CreateQRActivity"/>
+        <activity android:name=".mainpage.MainActivity"/>
+        <activity android:name=".qrpage.QRManagementActivity"/>
+        <activity android:name=".qrpage.CreateQRActivity"/>
         <activity android:name=".mypage.MyPageActivity"/>
 
     </application>

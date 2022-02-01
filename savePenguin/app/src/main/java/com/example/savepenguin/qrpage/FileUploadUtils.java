@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.qrpage;
 
 import android.util.Log;
 

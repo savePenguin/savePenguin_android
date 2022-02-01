@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,9 +14,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.savepenguin.Point;
-import com.example.savepenguin.QR;
+import com.example.savepenguin.model.Point;
 import com.example.savepenguin.R;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -71,6 +71,43 @@ public class PointHistoryFragment extends Fragment {
         adapter = new PointListAdapter(items);
         pointList.setLayoutManager(linearLayoutManager);
         pointList.setAdapter(adapter);
+
+        TextView week, month, halfYear, year;
+        week = viewGroup.findViewById(R.id.textView_week);
+        month = viewGroup.findViewById(R.id.textView_month);
+        halfYear = viewGroup.findViewById(R.id.textView_halfyear);
+        year = viewGroup.findViewById(R.id.textView_year);
+
+        // 1주 클릭
+        week.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("마이 페이지", "1주 클릭");
+
+            }
+        });
+
+        month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("마이 페이지", "1달 클릭");
+            }
+        });
+
+        halfYear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("마이 페이지", "반 년 클릭");
+            }
+        });
+
+        year.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("마이 페이지", "1년 클릭");
+            }
+        });
+
         return viewGroup;
     }
 }

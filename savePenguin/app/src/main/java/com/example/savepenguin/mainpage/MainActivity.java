@@ -1,4 +1,4 @@
-package com.example.savepenguin;
+package com.example.savepenguin.mainpage;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,8 +14,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
 import com.example.savepenguin.mypage.MyPageActivity;
+import com.example.savepenguin.qrpage.QRManagementActivity;
 
 public class MainActivity extends AppCompatActivity {
 

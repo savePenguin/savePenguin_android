@@ -45,13 +45,24 @@ public class ChangeFragment extends Fragment {
         EditText newPwVerify = viewGroup.findViewById(R.id.editText_newpw2);
 
         Button gobackBtn = viewGroup.findViewById(R.id.gobackBtn_changPw);
-
         gobackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.v("마이 페이지", "뒤로 가기");
                 myPageActivity.onChangeFragment(0);
             }
         });
+
+        Button changePw = viewGroup.findViewById(R.id.button_changepw);
+        changePw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //현재 비밀번호 검증 하고 통과되면 비밀번호 업데이트
+                Log.v("마이 페이지", "비밀번호 변경 버튼 누름");
+
+            }
+        });
+
 
         return viewGroup;
     }
