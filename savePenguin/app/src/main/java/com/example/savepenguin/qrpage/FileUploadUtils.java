@@ -1,5 +1,6 @@
 package com.example.savepenguin.qrpage;
 
+import android.content.ContentValues;
 import android.util.Log;
 
 import java.io.File;
@@ -12,12 +13,16 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 public class FileUploadUtils {
-    public static void send2Server(String url, File file) {
+    public static void send2Server(String url, File file, ContentValues info) {
 
         RequestBody requestBody = new MultipartBody.Builder()
+                .addFormDataPart("userid", (String) info.get("userid"))
+                .addFormDataPart("qrname", (String) info.get("qrname"))
+                .addFormDataPart("cuptype", String.valueOf(info.get("cuptype")))
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("files", file.getName(), RequestBody.create(MultipartBody.FORM, file))
                 .build();
+
         Request request = new Request.Builder()
                 .url(url) // Server URL 은 본인 IP를 입력
                 .post(requestBody)

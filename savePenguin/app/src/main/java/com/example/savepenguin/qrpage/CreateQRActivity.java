@@ -1,6 +1,7 @@
 package com.example.savepenguin.qrpage;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
+import com.example.savepenguin.account.SharedPreference;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,12 +44,13 @@ public class CreateQRActivity extends AppCompatActivity {
     private File tempImage, tempFile;
     private boolean haveImage;
     IpSetting ipSetting = new IpSetting();
-
+    private String userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createqr);
         Log.v("QR 발급 페이지", "QR 발급 Activity 시작");
+        userid = SharedPreference.getAttribute(getApplicationContext(), "userid");
 
         makeQRBtn = findViewById(R.id.makeQRBtn);
         deletePicBtn = findViewById(R.id.button_deletepic);
@@ -127,7 +130,11 @@ public class CreateQRActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "입력 누락", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.v("QR 발급 페이지", "정상 입력");
-                    FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/TestImage", tempFile);
+                    ContentValues qrInfo = new ContentValues();
+                    qrInfo.put("userid", userid);
+                    qrInfo.put("cuptype", cuptype);
+                    qrInfo.put("qrname", qrname);
+                    FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/TestImage", tempFile, qrInfo);
                     Toast.makeText(getApplicationContext(), "QR 발급", Toast.LENGTH_SHORT).show();
                     new Handler().postDelayed(new Runnable() {// 0.5 초 후에 실행
                         @Override

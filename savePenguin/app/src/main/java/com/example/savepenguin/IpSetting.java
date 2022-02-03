@@ -1,7 +1,7 @@
 package com.example.savepenguin;
 
 public class IpSetting {
-    private String ipv4 = "192.168.0.10";
+    private String ipv4 = "192.168.0.3";
 
     public String getIpv4() {
         return ipv4;

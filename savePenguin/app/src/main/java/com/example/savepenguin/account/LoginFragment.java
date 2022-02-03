@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.savepenguin.HttpClient;
+import com.example.savepenguin.NetworkTask;
 import com.example.savepenguin.mainpage.MainActivity;
 import com.example.savepenguin.R;
 import com.example.savepenguin.RequestHttpURLConnection;
@@ -77,7 +78,7 @@ public class LoginFragment extends Fragment {
                 Log.v("로그인 페이지", "id : " + id + " pw : " + pw);
 
                 // URL 설정.
-                String url = ipSetting.getBaseUrl() + "/auth/signin";
+                String url = ipSetting.getBaseUrl() + "/TestLogin";
 
                 ContentValues loginInfo = new ContentValues();
                 loginInfo.put("userid", id);
@@ -157,50 +158,6 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    public class NetworkTask extends AsyncTask<Void, Void, String> {
-
-        private String url;
-        private ContentValues values;
-
-        public NetworkTask(String url, ContentValues values) {
-
-            this.url = url;
-            this.values = values;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            String result; // 요청 결과를 저장할 변수.
-            RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-            result = requestHttpURLConnection.request(url, values); // 해당 URL로 부터 결과물을 얻어온다.
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
-            //리턴 결과로 로그인 성공 실패 여부 확인
-            isAccountValid = true;
-
-            if (isAccountValid) {
-                Log.v("로그인 페이지", "로그인 버튼 성공");
-
-                Log.v("로그인 페이지", "로그인 정보 가져오기");
-                SharedPreference.setAttribute(getContext(), "userid", "temp");
-
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-            } else {
-                Log.v("로그인 페이지", "로그인 실패");
-                Toast.makeText(getActivity(),"아이디나 비밀번호가 틀렸습니다", Toast.LENGTH_SHORT).show();
-            }
-            System.out.println(s);
-        }
-    }
 
     class CustomTask extends AsyncTask<String, Void, String> {
         String sendMsg, receiveMsg;
