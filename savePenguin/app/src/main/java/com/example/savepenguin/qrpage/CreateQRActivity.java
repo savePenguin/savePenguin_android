@@ -134,7 +134,10 @@ public class CreateQRActivity extends AppCompatActivity {
                     qrInfo.put("userid", userid);
                     qrInfo.put("cuptype", cuptype);
                     qrInfo.put("qrname", qrname);
-                    FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/TestImage", tempFile, qrInfo);
+                    System.out.println(tempFile.getParent());
+                    System.out.println(tempFile.getAbsolutePath());
+
+                    FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/TestImage", tempFile.getAbsolutePath(), qrInfo);
                     Toast.makeText(getApplicationContext(), "QR 발급", Toast.LENGTH_SHORT).show();
                     new Handler().postDelayed(new Runnable() {// 0.5 초 후에 실행
                         @Override

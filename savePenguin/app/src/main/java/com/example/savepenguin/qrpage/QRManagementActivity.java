@@ -1,5 +1,6 @@
 package com.example.savepenguin.qrpage;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,11 +41,13 @@ public class QRManagementActivity extends AppCompatActivity {
     LinearLayoutManager linearLayoutManager;
     UserListAdapter adapter;
     ArrayList<QR> items = new ArrayList<>();
+    private String userid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_management);
+        userid = SharedPreference.getAttribute(getApplicationContext(), "userid");
 
         Log.v("QR 관리 페이지", "QR 관리 Activity 시작");
 
@@ -68,7 +71,7 @@ public class QRManagementActivity extends AppCompatActivity {
 
         userList = findViewById(R.id.ListView_QRList);
         linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        adapter = new UserListAdapter(items);
+        adapter = new UserListAdapter(items, userid);
         userList.setLayoutManager(linearLayoutManager);
         userList.setAdapter(adapter);
     }
@@ -79,9 +82,11 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
 
     ArrayList<QR> items = new ArrayList<>();
     IpSetting ipSetting = new IpSetting();
+    private String userid;
 
-    public UserListAdapter(ArrayList<QR> items) {
+    public UserListAdapter(ArrayList<QR> items, String userid) {
         this.items = items;
+        this.userid = userid;
     }
 
     @NonNull
@@ -107,7 +112,7 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
 
     public class Holder extends RecyclerView.ViewHolder {
         private ImageView profileImg;
-        private EditText qrName,about;
+        private EditText qrName, about;
         private Button qrBtn, qrEditBtn;
 
 
@@ -158,17 +163,22 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
                         Log.v("QR 관리 페이지", pos + "번째 QR 수정 버튼 누름");
 
                         if (qrName.getKeyListener() == null) {
+                            Log.v("QR 관리 페이지", pos + "번째 qr 정보 수정 모드");
                             qrName.setKeyListener((KeyListener) qrName.getTag());
                             about.setKeyListener((KeyListener) about.getTag());
                         } else {
+                            Log.v("QR 관리 페이지", pos + "번째 qr 정보 업데이트");
                             qrName.setKeyListener(null);
                             about.setKeyListener(null);
+
+                            //서버에 수정된 qr이름과 설명 업데이트 해야함
+                            //선택된 qr 찾아서 정보 담아 보내기
+                            ContentValues qrInfo = new ContentValues();
+                            qrInfo.put("qrname", qrName.getText().toString());
+                            qrInfo.put("about", about.getText().toString());
+                            qrInfo.put("userid", userid);
+                            //qrInfo.put("cuptype",);
                         }
-
-                        //서버에 수정된 qr이름과 설명 업데이트 해야함
-
-
-
 
                     }
                 }
@@ -178,16 +188,18 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
         }
 
     }
+
     class CustomTask extends AsyncTask<String, Void, String> {
         String sendMsg, receiveMsg;
         String id;
+
         @Override
         // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
         protected String doInBackground(String... strings) {
             try {
                 id = strings[0];
                 String str;
-                URL url = new URL(ipSetting.getBaseUrl()+"/TestUpdateQR");  // 어떤 서버에 요청할지(localhost 안됨.)
+                URL url = new URL(ipSetting.getBaseUrl() + "/TestUpdateQR");  // 어떤 서버에 요청할지(localhost 안됨.)
                 // ex) http://123.456.789.10:8080/hello/android
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -197,12 +209,12 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
 
                 // 서버에 보낼 값 포함해 요청함.
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-                sendMsg = "qrname="+strings[0]+"&about="+strings[1]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                sendMsg = "qrname=" + strings[0] + "&about=" + strings[1]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
                 osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
                 osw.flush();
 
                 // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
-                if(conn.getResponseCode() == conn.HTTP_OK) {
+                if (conn.getResponseCode() == conn.HTTP_OK) {
                     InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
                     BufferedReader reader = new BufferedReader(tmp);
                     StringBuffer buffer = new StringBuffer();
@@ -211,7 +223,7 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
                     }
                     receiveMsg = buffer.toString();
                 } else {    // 통신이 실패한 이유를 찍기위한 로그
-                    Log.i("통신 결과", conn.getResponseCode()+"에러");
+                    Log.i("통신 결과", conn.getResponseCode() + "에러");
                 }
 
             } catch (MalformedURLException e) {
@@ -222,11 +234,69 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
             // 서버에서 보낸 값을 리턴합니다.
             return receiveMsg;
         }
+
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
+
+            System.out.println(s);
+        }
+    }
+
+    class getQRList extends AsyncTask<String, Void, String> {
+        String sendMsg, receiveMsg;
+        String id;
+
+        @Override
+        // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
+        protected String doInBackground(String... strings) {
+            try {
+                id = strings[0];
+                String str;
+                URL url = new URL(ipSetting.getBaseUrl() + "/TestGetQR");  // 어떤 서버에 요청할지(localhost 안됨.)
+                // ex) http://123.456.789.10:8080/hello/android
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
+                conn.setDoOutput(true);
+                conn.setConnectTimeout(1000);
+
+                // 서버에 보낼 값 포함해 요청함.
+                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+                sendMsg = "userid=" + strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
+                osw.flush();
+
+                // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
+                if (conn.getResponseCode() == conn.HTTP_OK) {
+                    InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
+                    BufferedReader reader = new BufferedReader(tmp);
+                    StringBuffer buffer = new StringBuffer();
+                    while ((str = reader.readLine()) != null) {
+                        buffer.append(str);
+                    }
+                    receiveMsg = buffer.toString();
+                } else {    // 통신이 실패한 이유를 찍기위한 로그
+                    Log.i("통신 결과", conn.getResponseCode() + "에러");
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            // 서버에서 보낸 값을 리턴합니다.
+            return receiveMsg;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
+            //리턴 결과로 로그인 성공 실패 여부 확인
 
             System.out.println(s);
         }
