@@ -2,6 +2,7 @@ package com.example.savepenguin.qrpage;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -21,15 +22,42 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.error.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateQRActivity extends AppCompatActivity {
 
@@ -44,7 +72,9 @@ public class CreateQRActivity extends AppCompatActivity {
     private File tempImage, tempFile;
     private boolean haveImage;
     IpSetting ipSetting = new IpSetting();
-    private String userid;
+    private String userid, fileURL;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,8 +166,11 @@ public class CreateQRActivity extends AppCompatActivity {
                     qrInfo.put("qrname", qrname);
                     System.out.println(tempFile.getParent());
                     System.out.println(tempFile.getAbsolutePath());
+                    if (tempFile == null) {
+                        System.out.println(tempFile + "는 비어있음");
+                    }
 
-                    FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/TestImage", tempFile.getAbsolutePath(), qrInfo);
+                    FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/qrcodetest", fileURL, qrInfo);
                     Toast.makeText(getApplicationContext(), "QR 발급", Toast.LENGTH_SHORT).show();
                     new Handler().postDelayed(new Runnable() {// 0.5 초 후에 실행
                         @Override
@@ -152,6 +185,7 @@ public class CreateQRActivity extends AppCompatActivity {
         });
 
     }
+
 
     public void initPicRegister() {
         text_cupPicName.setText("");
@@ -176,15 +210,20 @@ public class CreateQRActivity extends AppCompatActivity {
         if (requestCode == 101) {
             if (resultCode == RESULT_OK) {
                 Uri fileUri = data.getData();
+                fileURL = createCopyAndReturnRealPath(getApplicationContext(), fileUri);
+                System.out.println("fileURL = " + fileURL);;
+
                 Log.v("QR 발급 페이지", "fileUri : " + fileUri);
                 ContentResolver resolver = getContentResolver();
                 try {
                     InputStream instream = resolver.openInputStream(fileUri);
                     Bitmap imgBitmap = BitmapFactory.decodeStream(instream);
+
                     cupPreview.setImageBitmap(imgBitmap);    // 선택한 이미지 이미지뷰에 셋
                     haveImage = true;
                     finishPicRegister();
                     instream.close();   // 스트림 닫아주기
+
                     saveBitmapToJpeg(imgBitmap);    // 내부 저장소에 저장
                     Toast.makeText(getApplicationContext(), "파일 불러오기 성공", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
@@ -193,6 +232,7 @@ public class CreateQRActivity extends AppCompatActivity {
             }
         }
     }
+
 
     RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
@@ -216,8 +256,10 @@ public class CreateQRActivity extends AppCompatActivity {
             tempImage.createNewFile();
             FileOutputStream out = new FileOutputStream(tempFile);  // 파일을 쓸 수 있는 스트림을 준비하기
             FileOutputStream out2 = new FileOutputStream(tempImage);  // 파일을 쓸 수 있는 스트림을 준비하기
+
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);   // compress 함수를 사용해 스트림에 비트맵을 저장하기
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out2);   // compress 함수를 사용해 스트림에 비트맵을 저장하기
+
             out.close();    // 스트림 닫아주기
             out2.close();
 
@@ -227,18 +269,47 @@ public class CreateQRActivity extends AppCompatActivity {
         }
     }
 
-    // 선택된 이미지 파일명 가져오기
-    public String getImageNameToUri(Uri data) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(data, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+    // 절대경로 파악할 때 사용된 메소드
+    @Nullable
+    public static String createCopyAndReturnRealPath(@NonNull Context context, @NonNull Uri uri) {
 
-        cursor.moveToFirst();
+        final ContentResolver contentResolver = context.getContentResolver();
 
-        String imgPath = cursor.getString(column_index);
-        String imgName = imgPath.substring(imgPath.lastIndexOf("/") + 1);
+        if (contentResolver == null)
+            return null;
 
-        return imgName;
+        // 파일 경로를 만듬
+        String filePath = context.getApplicationInfo().dataDir + File.separator
+                + System.currentTimeMillis();
+
+
+        File file = new File(filePath);
+        try {
+            // 매개변수로 받은 uri 를 통해  이미지에 필요한 데이터를 불러 들인다.
+
+            InputStream inputStream = contentResolver.openInputStream(uri);
+            if (inputStream == null)
+                return null;
+            // 이미지 데이터를 다시 내보내면서 file 객체에  만들었던 경로를 이용한다.
+
+
+            OutputStream outputStream = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buf)) > 0)
+                outputStream.write(buf, 0, len);
+            outputStream.close();
+
+            inputStream.close();
+
+        } catch (IOException ignore) {
+            return null;
+        }
+
+        return file.getAbsolutePath();
     }
+
+
+
 
 }

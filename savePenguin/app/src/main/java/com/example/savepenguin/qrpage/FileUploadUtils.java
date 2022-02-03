@@ -3,6 +3,8 @@ package com.example.savepenguin.qrpage;
 import android.content.ContentValues;
 import android.util.Log;
 
+import com.android.volley.request.MultiPartRequest;
+
 import java.io.File;
 import java.io.IOException;
 import okhttp3.Call;
@@ -13,22 +15,24 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.http.Multipart;
+
 public class FileUploadUtils {
-    public static void send2Server(String url, String imagePath, ContentValues info) {
-        final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/*");
+    public static void send2Server(String url, String fileUrl, ContentValues info) {
+
         try {
-            File sourceFile = new File(imagePath);
+            File sourceFile = new File(fileUrl);
             Log.d("TAG", "File...::::" + sourceFile + " : " + sourceFile.exists());
-            String filename = imagePath.substring(imagePath.lastIndexOf("/") + 1);
-
-
+            String filename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+            //아래 두줄이 중요하다!!!
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("userid", (String) info.get("userid"))
                     .addFormDataPart("qrname", (String) info.get("qrname"))
                     .addFormDataPart("cuptype", String.valueOf(info.get("cuptype")))
-                    .addFormDataPart("cuppic", filename, RequestBody.create(MEDIA_TYPE_PNG, sourceFile))
-                    //.addFormDataPart("files", file.getName(), RequestBody.create(MultipartBody.FORM, file))
+                    //.addFormDataPart("cuppic", filename, RequestBody.create(MEDIA_TYPE_PNG, sourceFile))
+                    .addFormDataPart("cuppic2", filename, RequestBody.create(MultipartBody.FORM, sourceFile))
+                    //.addFormDataPart("cuppic3", filename, RequestBody.create(MultipartBody.FORM, file))
                     .build();
 
             Request request = new Request.Builder()

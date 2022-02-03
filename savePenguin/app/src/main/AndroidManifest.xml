@@ -33,7 +33,9 @@
         <activity android:name=".qrpage.QRManagementActivity"/>
         <activity android:name=".qrpage.CreateQRActivity"/>
         <activity android:name=".mypage.MyPageActivity"/>
-
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 
 </manifest>
