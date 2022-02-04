@@ -3,6 +3,7 @@ package com.example.savepenguin.mainpage;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,12 +16,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.savepenguin.GetPointTask;
+import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
+import com.example.savepenguin.account.LoginFragment;
 import com.example.savepenguin.account.SharedPreference;
 import com.example.savepenguin.mypage.MyPageActivity;
 import com.example.savepenguin.mypage.PenguinShopActivity;
 import com.example.savepenguin.qrpage.QRManagementActivity;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private PenguinFragement penguinFragement;
 
     private Button QR_menuBtn, sidebar_closeBtn;
-    private TextView text_userId, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop, sidebar_logout;
-
+    private TextView text_userId,text_userPoint, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop, sidebar_logout;
+    IpSetting ipSetting = new IpSetting();
     private String userID;
     private int userPoint;
 
@@ -43,15 +56,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.v("메인 페이지", "메인 Activity 시작");
-        context = this;
-
         penguinFragement = new PenguinFragement();
         userID = SharedPreference.getAttribute(getApplicationContext(), "userid");
+        context = this;
+        userPoint = 0;
+        try {
+            GetPointTask getPointTask = new GetPointTask();
+            getPointTask.execute(userID);
+            userPoint = getPointTask.getPoint();
+            Log.v("메인 페이지", userID + "의 현재 포인트는 " + userPoint);
+
+        } catch (Exception e) {
+
+        }
 
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_main, penguinFragement,"penguin").commit();
         penguinView = findViewById(R.id.imageView_penguin);
         text_userId = findViewById(R.id.text_userid);
         text_userId.setText("ID : " + userID);
+        text_userPoint = findViewById(R.id.textView_userpoint_main);
+        text_userPoint.setText(userPoint + "점");
+
 
 
         QR_menuBtn = findViewById(R.id.QR_MenuBtn);
@@ -68,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public void changePenguin(int imagecode) {
         System.out.println(imagecode);
 
@@ -78,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         sidebar_userId = findViewById(R.id.sidebar_userid);
         sidebar_userId.setText(userID + "님");
 
-        userPoint = 1000;
         sidebar_point = findViewById(R.id.sidebar_point);
         sidebar_point.setText("보유 포인트 : " + String.valueOf(userPoint));
 
@@ -116,6 +141,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.v("메인 페이지", "로그아웃 버튼 누름");
+
+                try {
+                    LogoutTask task = new LogoutTask();
+                    String result = task.execute(userID).get();
+                    Log.v("펭귄샵 페이지", "통신 리턴값 : " + result);
+                } catch (Exception e) {
+
+                }
+
                 //메인 액티비티 종료
                 finish();
             }
@@ -132,6 +166,58 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    class LogoutTask extends AsyncTask<String, Void, String> {
+        String sendMsg, receiveMsg;
+        String id;
+        @Override
+        // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
+        protected String doInBackground(String... strings) {
+            try {
+                id = strings[0];
+                String str;
+                URL url = new URL(ipSetting.getBaseUrl()+"/user/logout");  // 어떤 서버에 요청할지(localhost 안됨.)
+                // ex) http://123.456.789.10:8080/hello/android
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
+                conn.setDoOutput(true);
+                conn.setConnectTimeout(1000);
+
+                // 서버에 보낼 값 포함해 요청함.
+                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+                sendMsg = "userid="+strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
+                osw.flush();
+
+                // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
+                if(conn.getResponseCode() == conn.HTTP_OK) {
+                    InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
+                    BufferedReader reader = new BufferedReader(tmp);
+                    StringBuffer buffer = new StringBuffer();
+                    while ((str = reader.readLine()) != null) {
+                        buffer.append(str);
+                    }
+                    receiveMsg = buffer.toString();
+                } else {    // 통신이 실패한 이유를 찍기위한 로그
+                    Log.i("통신 결과", conn.getResponseCode()+"에러");
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            // 서버에서 보낸 값을 리턴합니다.
+            return receiveMsg;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            System.out.println(s);
+        }
     }
 
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {

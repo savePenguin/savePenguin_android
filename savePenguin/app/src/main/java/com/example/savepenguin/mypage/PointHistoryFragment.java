@@ -2,8 +2,11 @@ package com.example.savepenguin.mypage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +26,10 @@ import com.example.savepenguin.account.SharedPreference;
 import com.example.savepenguin.mainpage.MainActivity;
 import com.example.savepenguin.model.Point;
 import com.example.savepenguin.R;
+import com.example.savepenguin.model.QR;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
@@ -42,7 +48,8 @@ public class PointHistoryFragment extends Fragment {
     RecyclerView pointList;
     LinearLayoutManager linearLayoutManager;
     PointListAdapter adapter;
-    ArrayList<Point> items = new ArrayList<>();
+    public ArrayList<Point> items = new ArrayList<>();
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -77,16 +84,13 @@ public class PointHistoryFragment extends Fragment {
         pointList = viewGroup.findViewById(R.id.ListView_QRList);
 
         try {
-            CustomTask task = new CustomTask();
+            GetPointListTask task = new GetPointListTask();
             String result = task.execute(userid).get();
             Log.v("로그인 페이지", "통신 리턴값 : " + result);
         } catch (Exception e) {
 
         }
 
-        for (int i = 1; i < 6; i++) {
-            items.add(new Point(10 * i, "2022.01.01", "스타벅스 여의도역점", "내 컵"));
-        }
 
         linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         adapter = new PointListAdapter(items);
@@ -132,59 +136,86 @@ public class PointHistoryFragment extends Fragment {
         return viewGroup;
     }
 
-}
-class CustomTask extends AsyncTask<String, Void, String> {
-    String sendMsg, receiveMsg;
-    String id;
-    IpSetting ipSetting = new IpSetting();
-    @Override
-    // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
-    protected String doInBackground(String... strings) {
-        try {
-            id = strings[0];
-            String str;
-            URL url = new URL(ipSetting.getBaseUrl() + "/user/pointlist/" + strings[0]);  // 어떤 서버에 요청할지(localhost 안됨.)
-            // ex) http://123.456.789.10:8080/hello/android
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
-            conn.setDoOutput(true);
-            conn.setConnectTimeout(1000);
+    class GetPointListTask extends AsyncTask<String, Void, String> {
+        String sendMsg, receiveMsg;
+        String id;
+        IpSetting ipSetting = new IpSetting();
 
-            // 서버에 보낼 값 포함해 요청함.
-            OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-            sendMsg = "userid="+strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
-            osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
-            osw.flush();
+        @Override
+        // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
+        protected String doInBackground(String... strings) {
+            try {
+                id = strings[0];
+                String str;
+                URL url = new URL(ipSetting.getBaseUrl() + "/user/point/" + strings[0]);  // 어떤 서버에 요청할지(localhost 안됨.)
+                // ex) http://123.456.789.10:8080/hello/android
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
+                conn.setDoOutput(true);
+                conn.setConnectTimeout(1000);
 
-            // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
-            if(conn.getResponseCode() == conn.HTTP_OK) {
-                InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
-                BufferedReader reader = new BufferedReader(tmp);
-                StringBuffer buffer = new StringBuffer();
-                while ((str = reader.readLine()) != null) {
-                    buffer.append(str);
+                // 서버에 보낼 값 포함해 요청함.
+                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+                sendMsg = "userid=" + strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
+                osw.flush();
+
+                // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
+                if (conn.getResponseCode() == conn.HTTP_OK) {
+                    InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
+                    BufferedReader reader = new BufferedReader(tmp);
+                    StringBuffer buffer = new StringBuffer();
+                    while ((str = reader.readLine()) != null) {
+                        buffer.append(str);
+                    }
+                    receiveMsg = buffer.toString();
+                } else {    // 통신이 실패한 이유를 찍기위한 로그
+                    Log.i("통신 결과", conn.getResponseCode() + "에러");
                 }
-                receiveMsg = buffer.toString();
-            } else {    // 통신이 실패한 이유를 찍기위한 로그
-                Log.i("통신 결과", conn.getResponseCode()+"에러");
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            // 서버에서 보낸 값을 리턴합니다.
+            return receiveMsg;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if (s != null) {
+                JSONObject jsonObj = null;
+                JSONArray qrList = null;
+                try {
+                    jsonObj = new JSONObject(s);
+                    qrList = jsonObj.getJSONArray("Point");
+                    System.out.println("길이 " + qrList.length());
+                    for (int i = 0; i < qrList.length(); i++) {
+                        JSONObject point = qrList.getJSONObject(i);
+                        int cupPoint = point.getInt("cuppoint");
+                        String qrName = point.getString("qrname");
+                        String userName = point.getString("username");
+                        String pointLocation = point.getString("pointLocation");
+                        String pointDate = point.getString("pointDate");
+                        items.add(new Point(cupPoint, pointDate, pointLocation, qrName, userName));
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                adapter.notifyDataSetChanged();
+                System.out.println(s);
             }
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        // 서버에서 보낸 값을 리턴합니다.
-        return receiveMsg;
     }
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
 
-        System.out.println(s);
-    }
 }
+
 class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.Holder> {
 
     ArrayList<Point> items = new ArrayList<>();
@@ -203,8 +234,8 @@ class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.Holder> {
     @Override
     public void onBindViewHolder(@NonNull PointListAdapter.Holder holder, int position) {
         Point item = items.get(position);
-        holder.pointName.setText("사용 텀블러 : " + item.getTumbler() + "        +" + item.getPoint() + "점");
-        holder.aboutPoint.setText("획득 날짜"+item.getPointDate()+" 획득 위치 : "+item.getPointFrom());
+        holder.pointName.setText("사용 텀블러 : " + item.getQrname() + "        +" + item.getCuppoint() + "점");
+        holder.aboutPoint.setText("획득 날짜"+item.getPointDate()+" 획득 위치 : "+item.getPointLocation());
     }
 
     @Override

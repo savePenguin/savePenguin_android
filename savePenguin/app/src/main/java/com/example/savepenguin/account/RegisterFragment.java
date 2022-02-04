@@ -345,7 +345,7 @@ public class RegisterFragment extends Fragment {
 
                 // 서버에 보낼 값 포함해 요청함.
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-                sendMsg = "userid="+strings[0]+"&userpw="+strings[1]+"username="+strings[2]+"&useremail="+strings[3];; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                sendMsg = "userid="+strings[0]+"&userpw="+strings[1]+"&username="+strings[2]+"&useremail="+strings[3];; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
                 osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
                 osw.flush();
 

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.savepenguin.GetPointTask;
 import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
@@ -62,7 +63,15 @@ public class PenguinShopActivity extends AppCompatActivity {
         text_point = findViewById(R.id.textView_userpoint_penguinshop);
 
         //포인트 받아오는것
-        userPoint = 1000;
+        try {
+            GetPointTask getPointTask = new GetPointTask();
+            getPointTask.execute(userid);
+            userPoint = getPointTask.getPoint();
+            Log.v("메인 페이지", userid + "의 현재 포인트는 " + userPoint);
+
+        } catch (Exception e) {
+
+        }
 
         text_user.setText(userid + "님");
         text_point.setText(userPoint + "점");

@@ -154,31 +154,34 @@ public class QRManagementActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            JSONObject jsonObj = null;
-            JSONArray qrList = null;
-            try {
-                jsonObj = new JSONObject(s);
-                qrList = jsonObj.getJSONArray("qrlist");
-                System.out.println("길이 " +qrList.length());
-                for (int i = 0; i < qrList.length(); i++) {
-                    JSONObject qr = qrList.getJSONObject(i);
-                    String qrname = qr.getString("qrname");
-                    String imageData = qr.getString("data");
-                    System.out.println("qrname = " + qrname);
-                    System.out.println("imageData = " + imageData);
-                    //byte[] image = imageData.getBytes(StandardCharsets.UTF_8);
-                    byte[] image = Base64.decode(imageData, Base64.DEFAULT);
+            if (s != null) {
+                JSONObject jsonObj = null;
+                JSONArray qrList = null;
+                try {
+                    jsonObj = new JSONObject(s);
+                    qrList = jsonObj.getJSONArray("qrlist");
+                    System.out.println("길이 " +qrList.length());
+                    for (int i = 0; i < qrList.length(); i++) {
+                        JSONObject qr = qrList.getJSONObject(i);
+                        String qrname = qr.getString("qrname");
+                        String imageData = qr.getString("data");
+                        System.out.println("qrname = " + qrname);
+                        System.out.println("imageData = " + imageData);
+                        //byte[] image = imageData.getBytes(StandardCharsets.UTF_8);
+                        byte[] image = Base64.decode(imageData, Base64.DEFAULT);
 
-                    //byte[] image = imageData.getBytes();
-                    Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        //byte[] image = imageData.getBytes();
+                        Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
 
-                    items.add(new QR(qrname, "test", bmp));
+                        items.add(new QR(qrname, "test", bmp));
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
+                adapter.notifyDataSetChanged();
             }
-            adapter.notifyDataSetChanged();
+
             System.out.println(s);
         }
     }
