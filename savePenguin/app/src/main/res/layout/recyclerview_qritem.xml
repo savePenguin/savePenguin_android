@@ -6,7 +6,7 @@
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/profile_img"
+        android:id="@+id/penguin_Item_img"
         android:layout_width="108dp"
         android:layout_height="121dp"
         android:layout_marginRight="10dp"
@@ -32,7 +32,7 @@
                 android:text="qr 이름" />
 
             <Button
-                android:id="@+id/button_edit_qrinfo"
+                android:id="@+id/button_buyItem"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

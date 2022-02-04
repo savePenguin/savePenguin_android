@@ -33,6 +33,8 @@
         <activity android:name=".qrpage.QRManagementActivity"/>
         <activity android:name=".qrpage.CreateQRActivity"/>
         <activity android:name=".mypage.MyPageActivity"/>
+        <activity android:name=".mypage.PenguinShopActivity"/>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

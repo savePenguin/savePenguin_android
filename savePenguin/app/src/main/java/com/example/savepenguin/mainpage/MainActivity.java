@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
 import com.example.savepenguin.mypage.MyPageActivity;
+import com.example.savepenguin.mypage.PenguinShopActivity;
 import com.example.savepenguin.qrpage.QRManagementActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -89,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         sidebar_penguinShop = findViewById(R.id.sidebar_penguinshop);
+        sidebar_penguinShop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("메인 페이지", "펭귄샵 메뉴 버튼 누름");
+                Intent intent = new Intent(getApplicationContext(), PenguinShopActivity.class);
+                startActivity(intent);
+            }
+        });
 
         sidebar_logout = findViewById(R.id.sidebar_logout);
         sidebar_logout.setOnClickListener(new View.OnClickListener() {

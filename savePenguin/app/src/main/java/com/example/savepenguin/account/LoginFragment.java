@@ -168,7 +168,7 @@ public class LoginFragment extends Fragment {
             try {
                 id = strings[0];
                 String str;
-                URL url = new URL(ipSetting.getBaseUrl()+"/TestLogin");  // 어떤 서버에 요청할지(localhost 안됨.)
+                URL url = new URL(ipSetting.getBaseUrl()+"/auth/signin");  // 어떤 서버에 요청할지(localhost 안됨.)
                 // ex) http://123.456.789.10:8080/hello/android
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -226,34 +226,5 @@ public class LoginFragment extends Fragment {
             System.out.println(s);
         }
     }
-
-    public class NetworkTask2 extends AsyncTask<Map<String, String>, Integer, String> {
-        @Override
-        protected String doInBackground(Map<String, String>... maps) { // 내가 전송하고 싶은 파라미터
-
-            // Http 요청 준비 작업
-            HttpClient.Builder http = new HttpClient.Builder("POST", ipSetting.getBaseUrl() + "/TestLogin");
-
-            // Parameter 를 전송한다.
-            http.addAllParameters(maps[0]);
-
-            //Http 요청 전송
-            HttpClient post = http.create();
-            post.request();
-
-            // 응답 상태코드 가져오기
-            int statusCode = post.getHttpStatusCode();
-            // 응답 본문 가져오기
-            String body = post.getBody();
-
-            return body;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-
-        }
-    }
-
 
 }

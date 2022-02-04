@@ -30,9 +30,7 @@ public class FileUploadUtils {
                     .addFormDataPart("userid", (String) info.get("userid"))
                     .addFormDataPart("qrname", (String) info.get("qrname"))
                     .addFormDataPart("cuptype", String.valueOf(info.get("cuptype")))
-                    //.addFormDataPart("cuppic", filename, RequestBody.create(MEDIA_TYPE_PNG, sourceFile))
-                    .addFormDataPart("cuppic2", filename, RequestBody.create(MultipartBody.FORM, sourceFile))
-                    //.addFormDataPart("cuppic3", filename, RequestBody.create(MultipartBody.FORM, file))
+                    .addFormDataPart("cuppic", filename, RequestBody.create(MultipartBody.FORM, sourceFile))
                     .build();
 
             Request request = new Request.Builder()

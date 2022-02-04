@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
-import com.example.savepenguin.mainpage.MainActivity;
 import com.example.savepenguin.model.QR;
 
 import java.io.BufferedReader;
@@ -118,11 +115,11 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
 
         public Holder(@NonNull View itemView) {
             super(itemView);
-            profileImg = itemView.findViewById(R.id.profile_img);
+            profileImg = itemView.findViewById(R.id.penguin_Item_img);
             qrName = itemView.findViewById(R.id.edittext_qrname);
             about = itemView.findViewById(R.id.edittext_aboutqr);
             qrBtn = itemView.findViewById(R.id.button_qrBtn);
-            qrEditBtn = itemView.findViewById(R.id.button_edit_qrinfo);
+            qrEditBtn = itemView.findViewById(R.id.button_buyItem);
 
             qrName.setTag(qrName.getKeyListener());
             qrName.setKeyListener(null);

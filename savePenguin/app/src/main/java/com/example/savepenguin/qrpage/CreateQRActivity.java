@@ -25,23 +25,11 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.CursorLoader;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.error.VolleyError;
-import com.android.volley.request.SimpleMultiPartRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,15 +37,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class CreateQRActivity extends AppCompatActivity {
 
@@ -164,11 +145,6 @@ public class CreateQRActivity extends AppCompatActivity {
                     qrInfo.put("userid", userid);
                     qrInfo.put("cuptype", cuptype);
                     qrInfo.put("qrname", qrname);
-                    System.out.println(tempFile.getParent());
-                    System.out.println(tempFile.getAbsolutePath());
-                    if (tempFile == null) {
-                        System.out.println(tempFile + "는 비어있음");
-                    }
 
                     FileUploadUtils.send2Server(ipSetting.getBaseUrl() + "/qrcodetest", fileURL, qrInfo);
                     Toast.makeText(getApplicationContext(), "QR 발급", Toast.LENGTH_SHORT).show();
@@ -178,12 +154,9 @@ public class CreateQRActivity extends AppCompatActivity {
                             finish();
                         }
                     }, 500);
-
                 }
-
             }
         });
-
     }
 
 
@@ -308,8 +281,5 @@ public class CreateQRActivity extends AppCompatActivity {
 
         return file.getAbsolutePath();
     }
-
-
-
 
 }
