@@ -1,13 +1,14 @@
 package com.example.savepenguin.model;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 public class QR {
     private String qrName;
     private String about;
-    private Drawable profile;
+    private Bitmap profile;
 
-    public QR(String qrName, String about, Drawable profile) {
+    public QR(String qrName, String about, Bitmap profile) {
         this.qrName = qrName;
         this.about = about;
         this.profile = profile;
@@ -29,11 +30,11 @@ public class QR {
         this.about = about;
     }
 
-    public Drawable getProfile() {
+    public Bitmap getProfile() {
         return profile;
     }
 
-    public void setProfile(Drawable profile) {
+    public void setProfile(Bitmap profile) {
         this.profile = profile;
     }
 }

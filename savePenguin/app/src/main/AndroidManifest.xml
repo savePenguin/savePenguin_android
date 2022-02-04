@@ -33,6 +33,7 @@
         <activity android:name=".qrpage.QRManagementActivity"/>
         <activity android:name=".qrpage.CreateQRActivity"/>
         <activity android:name=".mypage.MyPageActivity"/>
+        <activity android:name=".qrpage.ShowQRActivity"/>
         <activity android:name=".mypage.PenguinShopActivity"/>
 
         <uses-library

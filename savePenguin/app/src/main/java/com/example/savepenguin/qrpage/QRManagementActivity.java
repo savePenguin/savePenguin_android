@@ -1,10 +1,16 @@
 package com.example.savepenguin.qrpage;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.KeyListener;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +27,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
+import com.example.savepenguin.mainpage.MainActivity;
 import com.example.savepenguin.model.QR;
 import com.example.savepenguin.mypage.PenguinShopActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,14 +42,16 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class QRManagementActivity extends AppCompatActivity {
 
     RecyclerView userList;
     LinearLayoutManager linearLayoutManager;
-    UserListAdapter adapter;
-    ArrayList<QR> items = new ArrayList<>();
+    public UserListAdapter adapter;
+    public static Context context;
+    public ArrayList<QR> items = new ArrayList<>();
     private String userid;
     IpSetting ipSetting = new IpSetting();
 
@@ -47,7 +60,7 @@ public class QRManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_management);
         userid = SharedPreference.getAttribute(getApplicationContext(), "userid");
-
+        context = this;
         Log.v("QR 관리 페이지", "QR 관리 Activity 시작");
 
         try {
@@ -57,6 +70,7 @@ public class QRManagementActivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
+
         Button createQrBtn = findViewById(R.id.button_createQR);
         createQrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,16 +83,25 @@ public class QRManagementActivity extends AppCompatActivity {
         });
 
 
-
-        for (int i = 0; i < 5; i++) {
-            items.add(new QR("qr" + i, "test" + i, getResources().getDrawable(R.drawable.sample_qr)));
-        }
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.sample_qr);
+        items.add(new QR("qr", "test", bitmap));
 
         userList = findViewById(R.id.ListView_QRList);
         linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         adapter = new UserListAdapter(items, userid);
         userList.setLayoutManager(linearLayoutManager);
         userList.setAdapter(adapter);
+    }
+
+    public void showQR(String qrname) {
+
+        //인텐트 선언 및 정의
+        Intent intent = new Intent(this, ShowQRActivity.class);
+
+        //입력한 input값을 intent로 전달한다.
+        intent.putExtra("qrname", qrname);
+        //액티비티 이동
+        startActivity(intent);
     }
 
     class getQRList extends AsyncTask<String, Void, String> {
@@ -91,7 +114,7 @@ public class QRManagementActivity extends AppCompatActivity {
             try {
                 id = strings[0];
                 String str;
-                URL url = new URL(ipSetting.getBaseUrl() + "/TestGetQR");  // 어떤 서버에 요청할지(localhost 안됨.)
+                URL url = new URL(ipSetting.getBaseUrl() + "/qrcode/" + strings[0] );  // 어떤 서버에 요청할지(localhost 안됨.)
                 // ex) http://123.456.789.10:8080/hello/android
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -131,9 +154,31 @@ public class QRManagementActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
-            //리턴 결과로 로그인 성공 실패 여부 확인
+            JSONObject jsonObj = null;
+            JSONArray qrList = null;
+            try {
+                jsonObj = new JSONObject(s);
+                qrList = jsonObj.getJSONArray("qrlist");
+                System.out.println("길이 " +qrList.length());
+                for (int i = 0; i < qrList.length(); i++) {
+                    JSONObject qr = qrList.getJSONObject(i);
+                    String qrname = qr.getString("qrname");
+                    String imageData = qr.getString("data");
+                    System.out.println("qrname = " + qrname);
+                    System.out.println("imageData = " + imageData);
+                    //byte[] image = imageData.getBytes(StandardCharsets.UTF_8);
+                    byte[] image = Base64.decode(imageData, Base64.DEFAULT);
 
+                    //byte[] image = imageData.getBytes();
+                    Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
+
+                    items.add(new QR(qrname, "test", bmp));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            adapter.notifyDataSetChanged();
             System.out.println(s);
         }
     }
@@ -217,7 +262,7 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         QR item = items.get(position);
-        holder.profileImg.setImageDrawable(item.getProfile());
+        holder.profileImg.setImageBitmap(item.getProfile());
         holder.qrName.setText(item.getQrName());
         holder.about.setText(item.getAbout());
 
@@ -267,8 +312,9 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
                     int pos = getAdapterPosition();
                     if (pos != RecyclerView.NO_POSITION) {
                         Log.v("QR 관리 페이지", pos + "번째 QR 보기 버튼 누름");
-                    }
+                        ((QRManagementActivity) QRManagementActivity.context).showQR(items.get(pos).getQrName());
 
+                    }
                 }
             });
 
@@ -304,4 +350,3 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
         }
     }
 }
-
