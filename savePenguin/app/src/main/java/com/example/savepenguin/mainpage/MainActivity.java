@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
         userPoint = 0;
         try {
             GetPointTask getPointTask = new GetPointTask();
-            getPointTask.execute(userID);
-            userPoint = getPointTask.getPoint();
+            userPoint = Integer.parseInt(getPointTask.execute(userID).get());
             Log.v("메인 페이지", userID + "의 현재 포인트는 " + userPoint);
 
         } catch (Exception e) {

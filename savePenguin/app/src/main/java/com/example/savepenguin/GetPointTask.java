@@ -22,7 +22,7 @@ public class GetPointTask extends AsyncTask<String, Void, String> {
         try {
             id = strings[0];
             String str;
-            URL url = new URL(ipSetting.getBaseUrl() + "/user/pointlist/" + id);  // 어떤 서버에 요청할지(localhost 안됨.)
+            URL url = new URL(ipSetting.getBaseUrl() + "/user/point/" + id);  // 어떤 서버에 요청할지(localhost 안됨.)
             // ex) http://123.456.789.10:8080/hello/android
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -67,6 +67,6 @@ public class GetPointTask extends AsyncTask<String, Void, String> {
     }
 
     public int getPoint() {
-        return 0;
+        return Integer.parseInt(result);
     }
 }
