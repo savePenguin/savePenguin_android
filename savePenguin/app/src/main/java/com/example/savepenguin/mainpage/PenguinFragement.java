@@ -18,6 +18,7 @@ public class PenguinFragement extends Fragment {
 
     MainActivity mainActivity;
     ViewGroup viewGroup;
+    ImageView penguin;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -39,12 +40,14 @@ public class PenguinFragement extends Fragment {
     ) {
         Log.v("메인 페이지", "펭귄 Fragment 시작");
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_main, container, false);
-
-
-
-
+        penguin = viewGroup.findViewById(R.id.imageView);
 
         return viewGroup;
     }
 
+//    public void changePenguinImage(int imageCode) {
+//        Log.v("메인 페이지", "펭귄 이미지 변경");
+//        Drawable temp = getResources().getDrawable(imageCode);
+//        penguin.setImageDrawable(temp);
+//    }
 }

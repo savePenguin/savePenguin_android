@@ -1,5 +1,6 @@
 package com.example.savepenguin.mainpage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.savepenguin.R;
@@ -22,29 +24,34 @@ import com.example.savepenguin.qrpage.QRManagementActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private PenguinFragement penguinFragement;
 
     private Button QR_menuBtn, sidebar_closeBtn;
-    private TextView text_userId, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop,sidebar_logout;
+    private TextView text_userId, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop, sidebar_logout;
 
     private String userID;
     private int userPoint;
 
     private DrawerLayout drawerLayout;
     private View drawerView;
-
+    private int REQUEST_PENGUIN_IMAGE = 0;
+    public static Context context;
+    public ImageView penguinView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.v("메인 페이지", "메인 Activity 시작");
+        context = this;
+
         penguinFragement = new PenguinFragement();
         userID = SharedPreference.getAttribute(getApplicationContext(), "userid");
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_main, penguinFragement).commit();
-
+        //getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView_main, penguinFragement,"penguin").commit();
+        penguinView = findViewById(R.id.imageView_penguin);
         text_userId = findViewById(R.id.text_userid);
-        text_userId.setText("ID : "+userID);
+        text_userId.setText("ID : " + userID);
 
 
         QR_menuBtn = findViewById(R.id.QR_MenuBtn);
@@ -61,6 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void changePenguin(int imagecode) {
+        System.out.println(imagecode);
+
+    }
+
     public void initSidebar() {
 
         sidebar_userId = findViewById(R.id.sidebar_userid);
@@ -68,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         userPoint = 1000;
         sidebar_point = findViewById(R.id.sidebar_point);
-        sidebar_point.setText("보유 포인트 : "+ String.valueOf(userPoint));
+        sidebar_point.setText("보유 포인트 : " + String.valueOf(userPoint));
 
         sidebar_closeBtn = findViewById(R.id.sidebar_close);
         sidebar_closeBtn.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v("메인 페이지", "펭귄샵 메뉴 버튼 누름");
                 Intent intent = new Intent(getApplicationContext(), PenguinShopActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_PENGUIN_IMAGE);
             }
         });
 
@@ -109,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        drawerView = (View)findViewById(R.id.drawer2);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerView = (View) findViewById(R.id.drawer2);
 
         drawerLayout.addDrawerListener(listener);
         drawerLayout.setScrimColor(Color.TRANSPARENT);
@@ -145,13 +157,12 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public void btnOnclick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.button_opensidebar:
                 Log.v("메인 페이지", "사이드바 열음");
                 drawerLayout.openDrawer(drawerView);
         }
     }
-
 
 
 }

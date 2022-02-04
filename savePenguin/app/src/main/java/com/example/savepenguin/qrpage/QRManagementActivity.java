@@ -22,6 +22,7 @@ import com.example.savepenguin.IpSetting;
 import com.example.savepenguin.R;
 import com.example.savepenguin.account.SharedPreference;
 import com.example.savepenguin.model.QR;
+import com.example.savepenguin.mypage.PenguinShopActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class QRManagementActivity extends AppCompatActivity {
     UserListAdapter adapter;
     ArrayList<QR> items = new ArrayList<>();
     private String userid;
+    IpSetting ipSetting = new IpSetting();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,13 @@ public class QRManagementActivity extends AppCompatActivity {
 
         Log.v("QR 관리 페이지", "QR 관리 Activity 시작");
 
+        try {
+            getQRList task = new getQRList();
+            String result = task.execute(userid).get();
+            Log.v("펭귄샵 페이지", "통신 리턴값 : " + result);
+        } catch (Exception e) {
 
+        }
         Button createQrBtn = findViewById(R.id.button_createQR);
         createQrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,12 +81,125 @@ public class QRManagementActivity extends AppCompatActivity {
         userList.setAdapter(adapter);
     }
 
+    class getQRList extends AsyncTask<String, Void, String> {
+        String sendMsg, receiveMsg;
+        String id;
+
+        @Override
+        // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
+        protected String doInBackground(String... strings) {
+            try {
+                id = strings[0];
+                String str;
+                URL url = new URL(ipSetting.getBaseUrl() + "/TestGetQR");  // 어떤 서버에 요청할지(localhost 안됨.)
+                // ex) http://123.456.789.10:8080/hello/android
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
+                conn.setDoOutput(true);
+                conn.setConnectTimeout(1000);
+
+                // 서버에 보낼 값 포함해 요청함.
+                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+                sendMsg = "userid=" + strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
+                osw.flush();
+
+                // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
+                if (conn.getResponseCode() == conn.HTTP_OK) {
+                    InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
+                    BufferedReader reader = new BufferedReader(tmp);
+                    StringBuffer buffer = new StringBuffer();
+                    while ((str = reader.readLine()) != null) {
+                        buffer.append(str);
+                    }
+                    receiveMsg = buffer.toString();
+                } else {    // 통신이 실패한 이유를 찍기위한 로그
+                    Log.i("통신 결과", conn.getResponseCode() + "에러");
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            // 서버에서 보낸 값을 리턴합니다.
+            return receiveMsg;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
+            //리턴 결과로 로그인 성공 실패 여부 확인
+
+            System.out.println(s);
+        }
+    }
+
+    class CustomTask extends AsyncTask<String, Void, String> {
+        String sendMsg, receiveMsg;
+        String id;
+
+        @Override
+        // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
+        protected String doInBackground(String... strings) {
+            try {
+                id = strings[0];
+                String str;
+                URL url = new URL(ipSetting.getBaseUrl() + "/TestUpdateQR");  // 어떤 서버에 요청할지(localhost 안됨.)
+                // ex) http://123.456.789.10:8080/hello/android
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
+                conn.setDoOutput(true);
+                conn.setConnectTimeout(1000);
+
+                // 서버에 보낼 값 포함해 요청함.
+                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+                sendMsg = "userid=" + strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
+                osw.flush();
+
+                // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
+                if (conn.getResponseCode() == conn.HTTP_OK) {
+                    InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
+                    BufferedReader reader = new BufferedReader(tmp);
+                    StringBuffer buffer = new StringBuffer();
+                    while ((str = reader.readLine()) != null) {
+                        buffer.append(str);
+                    }
+                    receiveMsg = buffer.toString();
+                } else {    // 통신이 실패한 이유를 찍기위한 로그
+                    Log.i("통신 결과", conn.getResponseCode() + "에러");
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            // 서버에서 보낸 값을 리턴합니다.
+            return receiveMsg;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
+
+            System.out.println(s);
+        }
+    }
+
 }
+
 
 class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
 
     ArrayList<QR> items = new ArrayList<>();
-    IpSetting ipSetting = new IpSetting();
     private String userid;
 
     public UserListAdapter(ArrayList<QR> items, String userid) {
@@ -180,124 +301,7 @@ class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder> {
                     }
                 }
             });
-
-
-        }
-
-    }
-
-    class CustomTask extends AsyncTask<String, Void, String> {
-        String sendMsg, receiveMsg;
-        String id;
-
-        @Override
-        // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
-        protected String doInBackground(String... strings) {
-            try {
-                id = strings[0];
-                String str;
-                URL url = new URL(ipSetting.getBaseUrl() + "/TestUpdateQR");  // 어떤 서버에 요청할지(localhost 안됨.)
-                // ex) http://123.456.789.10:8080/hello/android
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(1000);
-
-                // 서버에 보낼 값 포함해 요청함.
-                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-                sendMsg = "qrname=" + strings[0] + "&about=" + strings[1]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
-                osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
-                osw.flush();
-
-                // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
-                if (conn.getResponseCode() == conn.HTTP_OK) {
-                    InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
-                    BufferedReader reader = new BufferedReader(tmp);
-                    StringBuffer buffer = new StringBuffer();
-                    while ((str = reader.readLine()) != null) {
-                        buffer.append(str);
-                    }
-                    receiveMsg = buffer.toString();
-                } else {    // 통신이 실패한 이유를 찍기위한 로그
-                    Log.i("통신 결과", conn.getResponseCode() + "에러");
-                }
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // 서버에서 보낸 값을 리턴합니다.
-            return receiveMsg;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
-
-            System.out.println(s);
         }
     }
-
-    class getQRList extends AsyncTask<String, Void, String> {
-        String sendMsg, receiveMsg;
-        String id;
-
-        @Override
-        // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
-        protected String doInBackground(String... strings) {
-            try {
-                id = strings[0];
-                String str;
-                URL url = new URL(ipSetting.getBaseUrl() + "/TestGetQR");  // 어떤 서버에 요청할지(localhost 안됨.)
-                // ex) http://123.456.789.10:8080/hello/android
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestMethod("POST");                              //데이터를 POST 방식으로 전송합니다.
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(1000);
-
-                // 서버에 보낼 값 포함해 요청함.
-                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-                sendMsg = "userid=" + strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
-                osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
-                osw.flush();
-
-                // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
-                if (conn.getResponseCode() == conn.HTTP_OK) {
-                    InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
-                    BufferedReader reader = new BufferedReader(tmp);
-                    StringBuffer buffer = new StringBuffer();
-                    while ((str = reader.readLine()) != null) {
-                        buffer.append(str);
-                    }
-                    receiveMsg = buffer.toString();
-                } else {    // 통신이 실패한 이유를 찍기위한 로그
-                    Log.i("통신 결과", conn.getResponseCode() + "에러");
-                }
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // 서버에서 보낸 값을 리턴합니다.
-            return receiveMsg;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
-            //리턴 결과로 로그인 성공 실패 여부 확인
-
-            System.out.println(s);
-        }
-    }
-
 }
 

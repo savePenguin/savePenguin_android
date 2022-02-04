@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".mainpage.MainActivity">
 
+    <ImageView
+        android:id="@+id/imageView_penguin"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/main_image_test" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,14 +20,8 @@
         <androidx.drawerlayout.widget.DrawerLayout
             android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="568dp"
             tools:context=".mainpage.MainActivity">
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fragmentContainerView_main"
-                android:name="com.example.savepenguin.mainpage.PenguinFragement"
-                android:layout_width="match_parent"
-                android:layout_height="416dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
