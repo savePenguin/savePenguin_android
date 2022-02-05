@@ -49,8 +49,8 @@ public class PointHistoryFragment extends Fragment {
     LinearLayoutManager linearLayoutManager;
     PointListAdapter adapter;
     public ArrayList<Point> items = new ArrayList<>();
-
-
+    int userPoint;
+    String userID;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -72,7 +72,7 @@ public class PointHistoryFragment extends Fragment {
 
         Log.v("마이 페이지", "포인트 적립내역 Fragment 시작");
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_pointhistory, container, false);
-        String userid = SharedPreference.getAttribute(getActivity(), "userid");
+        userID = SharedPreference.getAttribute(getActivity(), "userid");
         Button gobackBtn = viewGroup.findViewById(R.id.gobackBtn_pointHistory);
 
         gobackBtn.setOnClickListener(new View.OnClickListener() {
@@ -85,8 +85,8 @@ public class PointHistoryFragment extends Fragment {
 
         try {
             GetPointListTask task = new GetPointListTask();
-            String result = task.execute(userid).get();
-            Log.v("로그인 페이지", "통신 리턴값 : " + result);
+            userPoint = Integer.parseInt(task.execute(userID).get());
+            Log.v("메인 페이지", userID + "의 현재 포인트는 " + userPoint);
         } catch (Exception e) {
 
         }

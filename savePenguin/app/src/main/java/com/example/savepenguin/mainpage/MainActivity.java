@@ -41,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private PenguinFragement penguinFragement;
 
     private Button QR_menuBtn, sidebar_closeBtn;
-    private TextView text_userId,text_userPoint, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop, sidebar_logout;
+    private TextView text_userId, sidebar_userId, sidebar_point, sidebar_myPage, sidebar_penguinShop, sidebar_logout;
+    public TextView text_userPoint;
+
     IpSetting ipSetting = new IpSetting();
     private String userID;
     private int userPoint;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private int REQUEST_PENGUIN_IMAGE = 0;
     public static Context context;
     public ImageView penguinView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         text_userId.setText("ID : " + userID);
         text_userPoint = findViewById(R.id.textView_userpoint_main);
         text_userPoint.setText(userPoint + "점");
-
 
 
         QR_menuBtn = findViewById(R.id.QR_MenuBtn);
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     LogoutTask task = new LogoutTask();
                     String result = task.execute(userID).get();
-                    Log.v("펭귄샵 페이지", "통신 리턴값 : " + result);
+                    Log.v("메인 페이지", "통신 리턴값 : " + result);
                 } catch (Exception e) {
 
                 }
@@ -170,13 +172,14 @@ public class MainActivity extends AppCompatActivity {
     class LogoutTask extends AsyncTask<String, Void, String> {
         String sendMsg, receiveMsg;
         String id;
+
         @Override
         // doInBackground의 매개변수 값이 여러개일 경우를 위해 배열로
         protected String doInBackground(String... strings) {
             try {
                 id = strings[0];
                 String str;
-                URL url = new URL(ipSetting.getBaseUrl()+"/user/logout");  // 어떤 서버에 요청할지(localhost 안됨.)
+                URL url = new URL(ipSetting.getBaseUrl() + "/user/logout");  // 어떤 서버에 요청할지(localhost 안됨.)
                 // ex) http://123.456.789.10:8080/hello/android
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -186,12 +189,12 @@ public class MainActivity extends AppCompatActivity {
 
                 // 서버에 보낼 값 포함해 요청함.
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-                sendMsg = "userid="+strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                sendMsg = "userid=" + strings[0]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
                 osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
                 osw.flush();
 
                 // jsp와 통신이 잘 되고, 서버에서 보낸 값 받음.
-                if(conn.getResponseCode() == conn.HTTP_OK) {
+                if (conn.getResponseCode() == conn.HTTP_OK) {
                     InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
                     BufferedReader reader = new BufferedReader(tmp);
                     StringBuffer buffer = new StringBuffer();
@@ -200,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     receiveMsg = buffer.toString();
                 } else {    // 통신이 실패한 이유를 찍기위한 로그
-                    Log.i("통신 결과", conn.getResponseCode()+"에러");
+                    Log.i("통신 결과", conn.getResponseCode() + "에러");
                 }
 
             } catch (MalformedURLException e) {
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
             // 서버에서 보낸 값을 리턴합니다.
             return receiveMsg;
         }
+
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);

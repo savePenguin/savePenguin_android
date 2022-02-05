@@ -65,8 +65,7 @@ public class PenguinShopActivity extends AppCompatActivity {
         //포인트 받아오는것
         try {
             GetPointTask getPointTask = new GetPointTask();
-            getPointTask.execute(userid);
-            userPoint = getPointTask.getPoint();
+            userPoint = Integer.parseInt(getPointTask.execute(userid).get());
             Log.v("메인 페이지", userid + "의 현재 포인트는 " + userPoint);
 
         } catch (Exception e) {
@@ -125,6 +124,7 @@ public class PenguinShopActivity extends AppCompatActivity {
 
     public void usePoint(int price) {
         userPoint = userPoint - price;
+        Log.v("펭귄샵 페이지", "");
         try {
             updatePointTask task = new updatePointTask();
             String result = task.execute(userid, String.valueOf(userPoint)).get();
@@ -138,6 +138,7 @@ public class PenguinShopActivity extends AppCompatActivity {
 
     public void updatePointText() {
         text_point.setText(userPoint + "점");
+        ((MainActivity) MainActivity.context).text_userPoint.setText(userPoint + "점");
     }
 
     class getPointTask extends AsyncTask<String, Void, String> {
@@ -202,7 +203,7 @@ public class PenguinShopActivity extends AppCompatActivity {
             try {
                 id = strings[0];
                 String str;
-                URL url = new URL(ipSetting.getBaseUrl() + "/user/pointlist/" + strings[0]);  // 어떤 서버에 요청할지(localhost 안됨.)
+                URL url = new URL(ipSetting.getBaseUrl() + "/user/pointUpdate/" + strings[0]);  // 어떤 서버에 요청할지(localhost 안됨.)
                 // ex) http://123.456.789.10:8080/hello/android
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -212,7 +213,7 @@ public class PenguinShopActivity extends AppCompatActivity {
 
                 // 서버에 보낼 값 포함해 요청함.
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-                sendMsg = "userid="+strings[0]+"userpoint="+strings[1]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
+                sendMsg = "userid="+strings[0]+"&userpoint="+strings[1]; // GET방식으로 작성해 POST로 보냄 ex) "id=admin&pwd=1234";
                 osw.write(sendMsg);                           // OutputStreamWriter에 담아 전송
                 osw.flush();
 
